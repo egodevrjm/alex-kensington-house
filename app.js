@@ -5,6 +5,7 @@ const state = {
   showAtlas: true,
   staffFilter: "All",
   imageFilter: "All",
+  modalTarget: null,
   mode: localStorage.getItem("albury.mode") || localStorage.getItem("kensington.mode") || "residence",
   bookings: loadBookings()
 };
@@ -38,7 +39,7 @@ function create(tag, className, text) {
   return element;
 }
 
-function imageBlock(src, label) {
+function imageBlock(src, label, options = {}) {
   const wrapper = create("div", "image-slot");
   const image = new Image();
   image.src = src;
@@ -47,6 +48,22 @@ function imageBlock(src, label) {
     wrapper.classList.add("loaded");
     wrapper.innerHTML = "";
     wrapper.appendChild(image);
+    if (options.zoom !== false) {
+      const zoomButton = create("button", "image-zoom", "Open image");
+      zoomButton.type = "button";
+      zoomButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        openImageModal({
+          src,
+          label,
+          meta: options.meta || "Albury House image",
+          path: src,
+          floorId: options.floorId,
+          roomId: options.roomId
+        });
+      });
+      wrapper.appendChild(zoomButton);
+    }
   };
   image.onerror = () => {
     wrapper.classList.add("missing");
@@ -123,6 +140,18 @@ function bindEvents() {
     state.showAtlas = true;
     renderTour();
   });
+
+  $("#modalClose").addEventListener("click", closeImageModal);
+  $("#modalBackdrop").addEventListener("click", closeImageModal);
+  $("#modalTourButton").addEventListener("click", () => {
+    if (!state.modalTarget) return;
+    const target = { ...state.modalTarget };
+    closeImageModal();
+    openTourRoom(target.floorId, target.roomId);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeImageModal();
+  });
 }
 
 function renderNav() {
@@ -193,7 +222,7 @@ function renderDashboard() {
   strip.innerHTML = "";
   HOUSE_DATA.featureImages.forEach(([floor, label, type, image, floorId, roomId]) => {
     const card = create("button", "image-card");
-    card.appendChild(imageBlock(image, label));
+    card.appendChild(imageBlock(image, label, { meta: `${floor} / ${type}`, floorId, roomId }));
     const copy = create("span", "image-card-copy");
     copy.innerHTML = `<strong>${label}</strong><small>${floor} / ${type}</small>`;
     card.appendChild(copy);
@@ -214,7 +243,7 @@ function renderMiniList(selector, items) {
 
 function renderTour() {
   $("#atlasImage").innerHTML = "";
-  $("#atlasImage").appendChild(imageBlock("assets/atlas/albury-house-atlas.png", "Albury House Atlas"));
+  $("#atlasImage").appendChild(imageBlock("assets/atlas/albury-house-atlas.png", "Albury House Atlas", { meta: "Full house atlas", floorId: "tour", roomId: "atlas" }));
   $("#atlasStage").classList.toggle("active", state.showAtlas);
   $("#atlasButton").classList.toggle("active", state.showAtlas);
   renderFloorGuide("#atlasFloorGuide", "atlas");
@@ -239,7 +268,7 @@ function renderTour() {
   $("#selectedFloorMood").textContent = floor.mood;
   const floorPlan = $("#floorPlanImage");
   floorPlan.innerHTML = "";
-  floorPlan.appendChild(imageBlock(floor.planImage, `${floor.name} floor plan`));
+  floorPlan.appendChild(imageBlock(floor.planImage, `${floor.name} floor plan`, { meta: "Floor guide crop", floorId: floor.id, roomId: floor.rooms[0][0] }));
   const floorPlanPath = create("small", "asset-path", floor.planImage);
   floorPlan.appendChild(floorPlanPath);
 
@@ -247,7 +276,7 @@ function renderTour() {
   roomGrid.innerHTML = "";
   floor.rooms.forEach(([id, name, description, image]) => {
     const card = create("button", id === state.roomId ? "room-card active" : "room-card");
-    card.appendChild(imageBlock(image, name));
+    card.appendChild(imageBlock(image, name, { meta: floor.name, floorId: floor.id, roomId: id }));
     const copy = create("span", "room-card-copy");
     const match = imageMatchForRoom(image, name);
     copy.innerHTML = `<strong>${name}</strong><small>${description}</small><em class="${match.className}">${match.label}</em>`;
@@ -269,7 +298,7 @@ function renderRoomDetail(floor) {
   const roomOps = roomDetailFor(id, floor);
   const detail = $("#roomDetail");
   detail.innerHTML = "";
-  detail.appendChild(imageBlock(image, name));
+  detail.appendChild(imageBlock(image, name, { meta: floor.name, floorId: floor.id, roomId: id }));
   const body = create("div", "room-detail-copy");
   body.innerHTML = `
     <p class="overline">${floor.name}</p>
@@ -376,6 +405,29 @@ function openTourRoom(floorId, roomId) {
   renderTour();
 }
 
+function openImageModal({ src, label, meta, path, floorId, roomId }) {
+  state.modalTarget = floorId && roomId ? { floorId, roomId } : null;
+  $("#modalImage").src = src;
+  $("#modalImage").alt = label;
+  $("#modalTitle").textContent = label;
+  $("#modalMeta").textContent = meta || "Albury House image";
+  $("#modalPath").textContent = path || src;
+  $("#modalTourButton").hidden = !state.modalTarget || floorId === "tour";
+  $("#imageModal").classList.add("active");
+  $("#imageModal").setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+}
+
+function closeImageModal() {
+  const modal = $("#imageModal");
+  if (!modal.classList.contains("active")) return;
+  modal.classList.remove("active");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  $("#modalImage").removeAttribute("src");
+  state.modalTarget = null;
+}
+
 function renderImageArchive() {
   const filters = ["All", ...new Set(HOUSE_DATA.imageArchive.map(([floor]) => floor))];
   const filterRow = $("#imageFilters");
@@ -395,7 +447,7 @@ function renderImageArchive() {
   grid.innerHTML = "";
   images.forEach(([floor, label, type, image, floorId, roomId]) => {
     const card = create("button", "archive-image-card");
-    card.appendChild(imageBlock(image, label));
+    card.appendChild(imageBlock(image, label, { meta: `${floor} / ${type}`, floorId, roomId }));
     const copy = create("span", "archive-image-copy");
     copy.innerHTML = `<strong>${label}</strong><small>${floor} / ${type}</small><em>${image}</em>`;
     card.appendChild(copy);

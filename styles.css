@@ -30,6 +30,10 @@ body {
   letter-spacing: 0;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 button,
 input,
 select,
@@ -689,6 +693,7 @@ p {
   display: block;
   padding: 0;
   background: var(--charcoal);
+  position: relative;
 }
 
 .image-slot img {
@@ -696,6 +701,118 @@ p {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.image-zoom {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  border: 1px solid rgba(255, 247, 236, 0.42);
+  background: rgba(23, 20, 17, 0.72);
+  color: #fff7ec;
+  padding: 7px 9px;
+  font-size: 0.75rem;
+  opacity: 0;
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.image-slot.loaded:hover .image-zoom,
+.image-zoom:focus-visible {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.image-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.image-modal.active {
+  display: flex;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(15, 12, 10, 0.74);
+  backdrop-filter: blur(16px);
+}
+
+.modal-card {
+  position: relative;
+  z-index: 1;
+  width: min(1120px, 94vw);
+  max-height: 92vh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background: #171411;
+  color: #fff7ec;
+  border: 1px solid rgba(242, 214, 181, 0.28);
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.38);
+}
+
+.modal-head,
+.modal-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px;
+}
+
+.modal-head h2 {
+  color: #fff7ec;
+}
+
+.modal-head .overline {
+  color: rgba(255, 247, 236, 0.58);
+}
+
+.modal-close {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 247, 236, 0.24);
+  background: rgba(255, 247, 236, 0.08);
+  color: #fff7ec;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.modal-image-wrap {
+  min-height: 0;
+  background: #0e0c0a;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.modal-image-wrap img {
+  display: block;
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+}
+
+.modal-foot {
+  border-top: 1px solid rgba(255, 247, 236, 0.12);
+}
+
+.modal-foot span {
+  color: rgba(255, 247, 236, 0.58);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.modal-foot .primary-button {
+  background: #fff7ec;
+  color: #171411;
+  white-space: nowrap;
 }
 
 .room-detail {
@@ -972,9 +1089,19 @@ time {
   }
 
   .topbar,
-  .section-head {
+  .section-head,
+  .modal-head,
+  .modal-foot {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .image-modal {
+    padding: 12px;
+  }
+
+  .modal-image-wrap img {
+    max-height: 62vh;
   }
 
   .dashboard-grid,
