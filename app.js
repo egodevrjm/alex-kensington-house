@@ -39,6 +39,16 @@ function create(tag, className, text) {
   return element;
 }
 
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function createSvgElement(tag, attrs = {}) {
+  const element = document.createElementNS(SVG_NS, tag);
+  Object.entries(attrs).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) element.setAttribute(key, value);
+  });
+  return element;
+}
+
 function imageBlock(src, label, options = {}) {
   const wrapper = create("div", "image-slot");
   const image = new Image();
@@ -243,7 +253,7 @@ function renderMiniList(selector, items) {
 
 function renderTour() {
   $("#atlasImage").innerHTML = "";
-  $("#atlasImage").appendChild(imageBlock("assets/atlas/albury-house-atlas.png", "Albury House Atlas", { meta: "Full house atlas", floorId: "tour", roomId: "atlas" }));
+  renderHouseAtlasMap("#atlasImage");
   $("#atlasStage").classList.toggle("active", state.showAtlas);
   $("#atlasButton").classList.toggle("active", state.showAtlas);
   renderFloorGuide("#atlasFloorGuide", "atlas");
@@ -268,8 +278,8 @@ function renderTour() {
   $("#selectedFloorMood").textContent = floor.mood;
   const floorPlan = $("#floorPlanImage");
   floorPlan.innerHTML = "";
-  floorPlan.appendChild(imageBlock(floor.planImage, `${floor.name} floor plan`, { meta: "Floor guide crop", floorId: floor.id, roomId: floor.rooms[0][0] }));
-  const floorPlanPath = create("small", "asset-path", floor.planImage);
+  floorPlan.appendChild(renderFloorPlanMap(floor, { size: "large", interactive: true }));
+  const floorPlanPath = create("small", "asset-path", `Generated SVG outline. Future illustrated crop: ${floor.planImage}`);
   floorPlan.appendChild(floorPlanPath);
 
   const roomGrid = $("#roomGrid");
@@ -289,6 +299,160 @@ function renderTour() {
   });
 
   renderRoomDetail(floor);
+}
+
+function renderHouseAtlasMap(selector) {
+  const container = $(selector);
+  const atlas = create("div", "generated-atlas");
+  HOUSE_DATA.floorGuide.forEach((guideFloor) => {
+    const floor = HOUSE_DATA.floors.find((item) => item.id === guideFloor.id);
+    if (!floor) return;
+    const button = create("button", floor.id === state.floorId && !state.showAtlas ? "active" : "");
+    button.type = "button";
+    button.appendChild(renderFloorPlanMap(floor, { size: "mini", interactive: false }));
+    const copy = create("span", "generated-atlas-copy");
+    copy.innerHTML = `<strong>${guideFloor.key}</strong><span>${floor.name}</span><small>${floor.role}</small>`;
+    button.appendChild(copy);
+    button.addEventListener("click", () => {
+      state.floorId = floor.id;
+      state.roomId = floor.rooms[0][0];
+      state.showAtlas = false;
+      renderTour();
+    });
+    atlas.appendChild(button);
+  });
+  container.appendChild(atlas);
+}
+
+function renderFloorPlanMap(floor, options = {}) {
+  const plan = FLOOR_PLAN_SHAPES[floor.id];
+  const wrapper = create("div", `outline-map ${options.size === "mini" ? "mini" : "large"}`);
+  if (!plan) {
+    wrapper.innerHTML = `<span>${floor.name}</span><small>Outline pending</small>`;
+    return wrapper;
+  }
+
+  const svg = createSvgElement("svg", {
+    viewBox: "0 0 920 344",
+    role: "img",
+    "aria-label": `${floor.name} generated outline map`
+  });
+
+  svg.appendChild(createSvgElement("path", {
+    class: "map-shell",
+    d: plan.outline || "M14 30H906V314H14Z"
+  }));
+
+  const shapes = [...(plan.rooms || []), ...(plan.service || [])];
+  const roomIds = new Set(floor.rooms.map(([id]) => id));
+  shapes.forEach(([id, label, x, y, width, height, kind]) => {
+    const group = createSvgElement("g", {
+      class: `map-zone map-${kind || "daily"} ${id === state.roomId ? "active" : ""} ${roomIds.has(id) ? "clickable" : ""}`,
+      "data-room-id": id
+    });
+    group.appendChild(createSvgElement("rect", {
+      x,
+      y,
+      width,
+      height,
+      rx: 2,
+      ry: 2
+    }));
+    const title = createSvgElement("title");
+    title.textContent = label;
+    group.appendChild(title);
+
+    const text = createSvgElement("text", {
+      x: x + width / 2,
+      y: y + height / 2,
+      "text-anchor": "middle",
+      "dominant-baseline": "middle"
+    });
+    labelLines(label, options.size === "mini" ? 9 : 14).forEach((line, index, lines) => {
+      const tspan = createSvgElement("tspan", {
+        x: x + width / 2,
+        dy: index === 0 ? `${(1 - lines.length) * 0.55}em` : "1.1em"
+      });
+      tspan.textContent = line;
+      text.appendChild(tspan);
+    });
+    group.appendChild(text);
+
+    if (options.interactive && roomIds.has(id)) {
+      group.setAttribute("tabindex", "0");
+      group.setAttribute("role", "button");
+      group.setAttribute("aria-label", `Open ${label}`);
+      group.addEventListener("click", () => {
+        state.showAtlas = false;
+        state.roomId = id;
+        renderTour();
+      });
+      group.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          state.showAtlas = false;
+          state.roomId = id;
+          renderTour();
+        }
+      });
+    }
+
+    svg.appendChild(group);
+  });
+
+  const route = createSvgElement("path", {
+    class: "map-route",
+    d: floor.id === "raised-ground"
+      ? "M82 270H332V180H724V276H854"
+      : floor.id === "first-floor"
+        ? "M84 94H690V250H884"
+        : "M72 248H610V88H836"
+  });
+  svg.appendChild(route);
+
+  const label = createSvgElement("text", {
+    class: "map-title",
+    x: 24,
+    y: 22
+  });
+  label.textContent = floor.name;
+  svg.appendChild(label);
+
+  wrapper.appendChild(svg);
+  const legend = create("div", "outline-legend");
+  legend.innerHTML = `
+    <span><i class="legend-daily"></i>Daily</span>
+    <span><i class="legend-social"></i>Social</span>
+    <span><i class="legend-music"></i>Music</span>
+    <span><i class="legend-wellness"></i>Wellness</span>
+    <span><i class="legend-service"></i>Service</span>
+  `;
+  if (options.size !== "mini") wrapper.appendChild(legend);
+  const note = create("small", "outline-note", plan.note);
+  if (options.size !== "mini") wrapper.appendChild(note);
+  return wrapper;
+}
+
+function labelLines(label, maxLength) {
+  const forced = label.split(" / ");
+  const lines = forced.flatMap((part) => {
+    if (part.length <= maxLength) return [part];
+    const words = part.split(" ");
+    const output = [];
+    let line = "";
+    words.forEach((word) => {
+      const next = line ? `${line} ${word}` : word;
+      if (next.length > maxLength && line) {
+        output.push(line);
+        line = word;
+      } else {
+        line = next;
+      }
+    });
+    if (line) output.push(line);
+    return output;
+  });
+  return lines.slice(0, 3);
 }
 
 function renderRoomDetail(floor) {

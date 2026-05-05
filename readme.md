@@ -6,7 +6,11 @@ Private house intranet web app for Albury House.
 
 Open `index.html` in a browser.
 
-## Image Slots
+## Image Slots And Floor Maps
+
+The House Tour currently renders generated SVG outline maps from
+`FLOOR_PLAN_SHAPES` in `data.js`. The maps are clickable in the app and cover
+all seven floors.
 
 The full-house atlas image is read from:
 
@@ -32,7 +36,7 @@ Examples:
 - `assets/rooms/roof-terrace.png`
 
 The full room list and image paths live in `data.js`.
-The current image labels are documented in `assets/rooms/ROOM_IMAGE_LABELS.md`.
+The current image labels are documented in `assets/rooms/room_image_labels.md`.
 
 ## Current Sections
 

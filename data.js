@@ -383,3 +383,143 @@ const HOUSE_DATA = {
     ["House Tone", "Ready, private, warm and calm. Competence should be felt before it is seen."]
   ]
 };
+
+const FLOOR_PLAN_SHAPES = {
+  "top-floor": {
+    note: "Private suite, archive rooms and roof terrace",
+    rooms: [
+      ["private-lounge", "Private Lounge", 24, 38, 166, 124, "private"],
+      ["primary-bedroom", "Primary Bedroom", 206, 38, 168, 124, "private"],
+      ["daily-bathroom", "Dark Bath", 390, 38, 86, 84, "wellness"],
+      ["light-bath", "Light Bath", 492, 38, 96, 84, "wellness"],
+      ["rare-books", "Rare Books", 604, 38, 92, 84, "archive"],
+      ["seasonal-dressing", "Dressing", 24, 182, 166, 112, "archive"],
+      ["archive-wardrobe", "Archive Wardrobe", 206, 182, 168, 112, "archive"],
+      ["watch-safe", "Watch Safe", 390, 142, 86, 152, "service"],
+      ["private-landing", "Private Landing", 492, 142, 96, 152, "circulation"],
+      ["roof-terrace", "Roof Terrace", 720, 38, 176, 256, "garden"]
+    ],
+    service: [
+      ["top-lift", "Lift", 604, 142, 92, 70, "circulation"],
+      ["top-stair", "Stair", 604, 224, 92, 70, "circulation"]
+    ],
+    outline: "M16 26H708V306H16Z M712 26H904V306H712Z"
+  },
+  "third-floor": {
+    note: "Flexible bedrooms with shared sitting room",
+    rooms: [
+      ["guest-bedroom-4", "Guest Bedroom 4", 24, 42, 162, 136, "sleeping"],
+      ["guest-bedroom-5", "Guest Bedroom 5", 202, 42, 162, 136, "sleeping"],
+      ["guest-bedroom-6", "Guest Bedroom 6", 380, 42, 162, 136, "sleeping"],
+      ["guest-sitting-room", "Guest Sitting", 662, 42, 236, 216, "social"],
+      ["guest-bath-4", "Bath 4", 24, 196, 78, 92, "wellness"],
+      ["guest-bath-5", "Bath 5", 202, 196, 78, 92, "wellness"],
+      ["guest-bath-6", "Bath 6", 380, 196, 78, 92, "wellness"],
+      ["third-linen", "Linen", 556, 196, 88, 92, "service"],
+      ["third-landing", "Landing", 118, 196, 420, 92, "circulation"]
+    ],
+    service: [
+      ["third-lift", "Lift", 556, 42, 88, 62, "circulation"],
+      ["third-stair", "Stair", 556, 116, 88, 62, "circulation"]
+    ],
+    outline: "M16 30H906V300H16Z"
+  },
+  "second-floor": {
+    note: "Principal guest suites and landing support",
+    rooms: [
+      ["principal-guest", "Principal Guest", 24, 42, 176, 146, "sleeping"],
+      ["guest-bedroom-2", "Guest Bedroom 2", 216, 42, 160, 146, "sleeping"],
+      ["guest-bedroom-3", "Guest Bedroom 3", 392, 42, 160, 146, "sleeping"],
+      ["principal-dressing", "Dressing Room", 676, 42, 220, 86, "archive"],
+      ["principal-guest-bath", "Principal Bath", 676, 146, 220, 128, "wellness"],
+      ["guest-bath-2", "Bath 2", 24, 206, 84, 74, "wellness"],
+      ["guest-bath-3", "Bath 3", 216, 206, 84, 74, "wellness"],
+      ["linen-press", "Linen Press", 568, 206, 92, 74, "service"],
+      ["second-landing", "Landing", 124, 206, 428, 74, "circulation"]
+    ],
+    service: [
+      ["second-lift", "Lift", 568, 42, 92, 62, "circulation"],
+      ["second-stair", "Stair", 568, 116, 92, 72, "circulation"]
+    ],
+    outline: "M16 30H906V292H16Z"
+  },
+  "first-floor": {
+    note: "Self-contained Music Nobile with service route",
+    rooms: [
+      ["music-nobile-threshold", "Threshold", 22, 42, 98, 106, "circulation"],
+      ["principal-salon", "Principal Salon", 136, 42, 204, 134, "social"],
+      ["music-room", "Music Room", 356, 42, 170, 134, "music"],
+      ["control-listening", "Control / Listening", 22, 194, 242, 112, "music"],
+      ["supper-room", "Supper Room", 280, 194, 248, 112, "social"],
+      ["drinks-pantry", "Drinks Pantry", 652, 194, 118, 112, "service"],
+      ["first-powder", "Powder", 786, 194, 62, 112, "wellness"],
+      ["musician-route", "Musician Route", 862, 42, 42, 264, "service"],
+      ["first-landing", "Landing", 544, 42, 294, 134, "circulation"]
+    ],
+    service: [
+      ["first-lift", "Lift", 544, 194, 92, 112, "circulation"]
+    ],
+    outline: "M14 30H914V318H14Z"
+  },
+  "raised-ground": {
+    note: "Arrival, daily living, kitchen and garden",
+    rooms: [
+      ["front-garden", "Front Garden", 22, 226, 230, 88, "garden"],
+      ["entrance-hall", "Entrance Hall", 268, 132, 126, 96, "circulation"],
+      ["main-stair", "Main Stair", 410, 132, 126, 96, "circulation"],
+      ["cloakroom", "Guest WC", 552, 132, 82, 96, "wellness"],
+      ["coat-cupboard", "Coats", 650, 132, 74, 96, "service"],
+      ["kitchen-breakfast", "Kitchen / Breakfast", 22, 36, 244, 166, "daily"],
+      ["garden-room", "Garden Room", 282, 36, 206, 82, "daily"],
+      ["study-library", "Study / Library", 504, 36, 150, 82, "work"],
+      ["flower-room", "Flower Room", 668, 36, 126, 82, "service"],
+      ["boot-room", "Boot Room", 808, 36, 90, 82, "service"],
+      ["rear-terrace", "Rear Terrace", 648, 246, 250, 68, "garden"],
+      ["main-garden", "Main Garden", 648, 132, 250, 96, "garden"]
+    ],
+    service: [
+      ["ground-lift", "Lift", 552, 246, 82, 68, "circulation"]
+    ],
+    outline: "M14 24H906V326H14Z"
+  },
+  "upper-basement": {
+    note: "Private club rooms and back-of-house engine",
+    rooms: [
+      ["bar-games", "Bar / Games", 22, 42, 226, 174, "social"],
+      ["cinema", "Cinema", 264, 42, 178, 174, "social"],
+      ["wine-bourbon-room", "Wine / Bourbon", 458, 42, 154, 174, "social"],
+      ["basement-powder", "Powder", 628, 42, 82, 80, "wellness"],
+      ["service-kitchen", "Service Kitchen", 726, 42, 172, 80, "service"],
+      ["laundry", "Laundry", 628, 136, 128, 80, "service"],
+      ["delivery-hold", "Delivery Hold", 772, 136, 126, 80, "service"],
+      ["staff-office", "Staff Office", 628, 232, 128, 72, "service"],
+      ["housekeeping-store", "Housekeeping", 772, 232, 126, 72, "service"],
+      ["service-stair-hall", "Service Hall", 458, 232, 154, 72, "circulation"],
+      ["plant-mep", "Plant / MEP", 264, 232, 178, 72, "service"],
+      ["powder-room", "Powder", 22, 232, 226, 72, "wellness"]
+    ],
+    service: [
+      ["upper-basement-lift", "Lift", 458, 136, 70, 80, "circulation"],
+      ["upper-basement-stair", "Stair", 542, 136, 70, 80, "circulation"]
+    ],
+    outline: "M14 30H906V318H14Z"
+  },
+  "lower-basement": {
+    note: "Wellness suite, pool, gym and plant",
+    rooms: [
+      ["indoor-pool", "Indoor Pool", 22, 42, 204, 214, "wellness"],
+      ["spa-lounge", "Spa Lounge", 242, 42, 208, 102, "wellness"],
+      ["treatment-room", "Treatment", 466, 42, 124, 102, "wellness"],
+      ["steam-room", "Steam", 606, 42, 86, 102, "wellness"],
+      ["cold-plunge", "Cold Plunge", 708, 42, 92, 102, "wellness"],
+      ["gym", "Gym", 466, 166, 226, 116, "work"],
+      ["wellness-bar", "Wellness Bar", 242, 166, 208, 116, "social"],
+      ["plant-room", "Plant", 708, 166, 92, 116, "service"],
+      ["lift-motor-room", "Lift Motor", 816, 42, 82, 240, "service"]
+    ],
+    service: [
+      ["lower-basement-stair", "Stair", 606, 166, 86, 116, "circulation"]
+    ],
+    outline: "M14 30H906V294H14Z"
+  }
+};
