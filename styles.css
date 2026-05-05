@@ -424,6 +424,72 @@ p {
   font-size: 0.85rem;
 }
 
+.floor-guide-map {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.floor-guide-map.compact {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.floor-guide-map button {
+  border: 1px solid var(--line);
+  background: rgba(255, 252, 246, 0.58);
+  color: var(--ink);
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  text-align: left;
+}
+
+.floor-guide-map.compact button {
+  display: block;
+  min-height: 128px;
+}
+
+.floor-guide-map button.active,
+.floor-guide-map button:hover {
+  background: var(--charcoal);
+  color: #fff7ec;
+}
+
+.floor-key {
+  width: 36px;
+  height: 36px;
+  border: 1px solid currentColor;
+  display: grid;
+  place-items: center;
+  font-family: Georgia, serif;
+  color: var(--bronze);
+}
+
+.floor-guide-map button.active .floor-key,
+.floor-guide-map button:hover .floor-key {
+  color: #f2d6b5;
+}
+
+.floor-guide-copy strong,
+.floor-guide-copy small,
+.floor-guide-copy em {
+  display: block;
+}
+
+.floor-guide-copy small,
+.floor-guide-copy em {
+  font-size: 0.78rem;
+  opacity: 0.72;
+  line-height: 1.35;
+  margin-top: 3px;
+}
+
+.floor-guide-copy em {
+  font-style: normal;
+}
+
 .split-layout {
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr) 330px;
@@ -484,13 +550,21 @@ p {
 }
 
 .floor-buttons span,
-.room-card small {
+.room-card small,
+.room-card em {
   display: block;
   margin-top: 4px;
   color: currentColor;
   opacity: 0.68;
   font-size: 0.78rem;
   line-height: 1.35;
+}
+
+.room-card em {
+  opacity: 1;
+  font-style: normal;
+  font-weight: 800;
+  color: var(--bronze);
 }
 
 .room-grid {
@@ -636,6 +710,21 @@ p {
 
 .room-detail-copy h2 {
   margin: 4px 0 12px;
+}
+
+.detail-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.detail-tags span {
+  border: 1px solid var(--line);
+  background: rgba(255, 252, 246, 0.68);
+  color: var(--oak);
+  padding: 7px 9px;
+  font-size: 0.76rem;
 }
 
 dl {
@@ -828,6 +917,7 @@ time {
   .readiness-grid,
   .image-strip,
   .image-archive-grid,
+  .floor-guide-map.compact,
   .atlas-notes {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -892,6 +982,7 @@ time {
   .readiness-grid,
   .image-strip,
   .image-archive-grid,
+  .floor-guide-map.compact,
   .atlas-notes,
   .split-layout,
   .booking-layout,

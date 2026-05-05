@@ -1,4 +1,6 @@
 const HOUSE_DATA = {
+  houseName: "Albury House",
+  houseSubtitle: "Private house intranet",
   nav: [
     ["dashboard", "Dashboard"],
     ["tour", "House Tour"],
@@ -23,7 +25,7 @@ const HOUSE_DATA = {
       text: "Knight Frank maintains readiness: cleaning, plant, garden, pool, archive climate, security, systems and quiet inspection rhythms."
     },
     {
-      id: "studio",
+      id: "music-nobile",
       name: "Music Nobile",
       text: "First floor runs as a sealed music and entertaining suite. Musicians, engineers, service and late food move through the service route."
     },
@@ -35,7 +37,79 @@ const HOUSE_DATA = {
     {
       id: "quiet",
       name: "Quiet Night",
-      text: "Reduced movement, warm low lighting, no unnecessary service crossings, studio and wellness held for private use."
+      text: "Reduced movement, warm low lighting, no unnecessary service crossings, music floor and wellness held for private use."
+    }
+  ],
+  floorGuide: [
+    {
+      id: "top-floor",
+      key: "4",
+      name: "Top Floor",
+      role: "Alex's private apartment",
+      zone: "Private / archive",
+      stats: "10 rooms",
+      route: "Main stair, lift, private threshold",
+      note: "Bedroom, lounge, wardrobes, archive, rare books and roof terrace."
+    },
+    {
+      id: "third-floor",
+      key: "3",
+      name: "Third Floor",
+      role: "Flexible guest floor",
+      zone: "Guest / friends",
+      stats: "6 bedrooms/baths + sitting room",
+      route: "Main stair, lift, service support",
+      note: "Younger guest layer for friends, musicians and post-event stays."
+    },
+    {
+      id: "second-floor",
+      key: "2",
+      name: "Second Floor",
+      role: "Principal guest floor",
+      zone: "Senior guest",
+      stats: "3 guest suites",
+      route: "Main stair, lift, housekeeping support",
+      note: "Grown-up guest accommodation with the former Homer/Rosie room."
+    },
+    {
+      id: "first-floor",
+      key: "1",
+      name: "First Floor / Music Nobile",
+      role: "Music, playback, dining",
+      zone: "Music / social",
+      stats: "9 rooms",
+      route: "Main stair glass threshold or service stair",
+      note: "Self-contained piano nobile for sessions, listening, dinner and late service."
+    },
+    {
+      id: "raised-ground",
+      key: "G",
+      name: "Raised Ground Floor",
+      role: "Daily living and garden",
+      zone: "Daily house",
+      stats: "12 areas",
+      route: "Front door, main stair, garden, lift",
+      note: "Arrival, kitchen, study, garden room, flower room, terrace and garden."
+    },
+    {
+      id: "upper-basement",
+      key: "-1",
+      name: "Upper Basement / Lower Ground",
+      role: "Private club and service engine",
+      zone: "Events / service",
+      stats: "12 rooms",
+      route: "Service entrance, service stair, lift",
+      note: "Bar, cinema, tasting, service kitchen, garment care and event staging."
+    },
+    {
+      id: "lower-basement",
+      key: "-2",
+      name: "Lower Basement",
+      role: "Wellness, wine and plant",
+      zone: "Wellness / systems",
+      stats: "9 areas",
+      route: "Lift, service stair, wellness circulation",
+      note: "Pool, spa lounge, steam, cold plunge, treatment, gym and plant support."
     }
   ],
   featureImages: [
@@ -80,7 +154,7 @@ const HOUSE_DATA = {
         ["delivery-hold", "Delivery Hold / Event Staging", "Receives flowers, garment bags, catering cases, instruments and production crates.", "assets/rooms/bar-games.png"],
         ["staff-office", "Staff Office", "Coordination nook for manuals, schedules, event plans, readiness logs and secure files.", "assets/rooms/bar-games.png"],
         ["housekeeping-store", "Housekeeping Store", "Cleaning supplies, guest supplies, candles, linens, vases and paper goods.", "assets/rooms/bar-games.png"],
-        ["service-stair-hall", "Service Stair Hall", "Back-of-house hub linking service entrance, studio, guest floors and support zones.", "assets/rooms/bar-games.png"],
+        ["service-stair-hall", "Service Stair Hall", "Back-of-house hub linking service entrance, music floor, guest floors and support zones.", "assets/rooms/bar-games.png"],
         ["plant-mep", "Plant Room / MEP", "Lower-ground mechanical and electrical support for the house operations layer.", "assets/rooms/bar-games.png"],
         ["powder-room", "Powder Room", "Compact dark powder room for the private club and cinema level.", "assets/rooms/cinema.png"]
       ]
@@ -102,7 +176,7 @@ const HOUSE_DATA = {
         ["flower-room", "Flower Room / Garden Pantry", "Stone counter, sink, vase storage, terrace glassware, candles and garden-event prep.", "assets/rooms/flower-room.png"],
         ["boot-room", "Garden Lobby / Boot Room", "Stone floor, hooks, umbrellas, boots, cushions, throws and outdoor kit.", "assets/rooms/boot-room.png"],
         ["rear-terrace", "Rear Terrace", "Stone terrace with outdoor dining, lanterns, planters and heaters.", "assets/rooms/rear-terrace.png"],
-        ["main-garden", "Main Garden", "Private walled Kensington garden with disciplined planting, terrace, lawn and far seating pocket.", "assets/rooms/rear-terrace.png"],
+        ["main-garden", "Main Garden", "Private walled garden with disciplined planting, terrace, lawn and far seating pocket.", "assets/rooms/rear-terrace.png"],
         ["front-garden", "Front Garden / Forecourt", "Formal front threshold with railings, planting, arrival control and the black front door approach.", "assets/rooms/entrance-hall.png"]
       ]
     },
@@ -113,11 +187,11 @@ const HOUSE_DATA = {
       mood: "Self-contained after dark",
       planImage: "assets/atlas/floors/first-floor-music-nobile.png",
       rooms: [
-        ["music-nobile-threshold", "Music Nobile Glass Threshold", "Smoked or fluted glass door with acoustic seal and restrained Music Nobile mark.", "assets/rooms/music-nobile-threshold.png"],
+        ["music-nobile-threshold", "Music Nobile Threshold", "Smoked or fluted glass door with acoustic seal and a restrained private music-floor mark.", "assets/rooms/music-nobile-threshold.png"],
         ["first-landing", "First-Floor Landing / Gallery", "Gallery-like arrival zone with art, rug, console and controlled lighting.", "assets/rooms/music-nobile-threshold.png"],
         ["principal-salon", "Principal Salon", "Main social lounge for drinks, conversation, waiting before dinner and post-session sprawl.", "assets/rooms/principal-salon.png"],
         ["music-room", "Music Room", "Working music room with 1910 C. Bechstein grand, hidden acoustic treatment and tall windows.", "assets/rooms/music-room.png"],
-        ["control-listening", "Studio-Control-Listening Room", "Private control room and playback salon with monitors, console, vinyl wall and sofa.", "assets/rooms/control-listening.png"],
+        ["control-listening", "Control / Listening Room", "Private control room and playback salon with monitors, console, vinyl wall and sofa.", "assets/rooms/control-listening.png"],
         ["supper-room", "Dining Room / Supper Room", "Flexible private dining room for dinners, artist meals, label meetings and family suppers.", "assets/rooms/supper-room.png"],
         ["drinks-pantry", "Drinks Bar & Service Pantry", "Bar, sink, glasswasher, ice, fridges, coffee, plate warmer and service stair connection.", "assets/rooms/control-listening.png"],
         ["first-powder", "First-Floor Powder Room", "Sharper evening powder room with dark stone, bronze and flattering atmosphere.", "assets/rooms/music-nobile-threshold.png"],
@@ -176,42 +250,42 @@ const HOUSE_DATA = {
         ["archive-wardrobe", "Archive Wardrobe", "Museum-grade fashion archive with climate-controlled cases, vitrines and flat drawers.", "assets/rooms/archive-wardrobe.png"],
         ["watch-safe", "Watch & Jewellery Safe", "Integrated safe for watches, family pieces, jewellery and high-value accessories.", "assets/rooms/watch-safe.png"],
         ["rare-books", "Rare Books Case / Reading Nook", "Protected book area for first editions, intimate and almost sacred.", "assets/rooms/top-floor-archive-suite-overview.png"],
-        ["roof-terrace", "Private Roof Terrace", "All-weather seating, planters, terrace bar, lanterns, blankets and Kensington skyline views.", "assets/rooms/roof-terrace.png"]
+        ["roof-terrace", "Private Roof Terrace", "All-weather seating, planters, terrace bar, lanterns, blankets and west London skyline views.", "assets/rooms/roof-terrace.png"]
       ]
     }
   ],
   imageArchive: [
-    ["Lower Basement", "Indoor Pool", "Room", "assets/rooms/indoor-pool.png", "lower-basement", "indoor-pool"],
-    ["Lower Basement", "Wellness Overview", "Overview", "assets/rooms/lower-basement-wellness-overview.png", "lower-basement", "spa-lounge"],
-    ["Upper Basement / Lower Ground", "Bar / Games Room", "Room", "assets/rooms/bar-games.png", "upper-basement", "bar-games"],
-    ["Upper Basement / Lower Ground", "Cinema / Screening Room", "Room", "assets/rooms/cinema.png", "upper-basement", "cinema"],
-    ["Upper Basement / Lower Ground", "Wine / Bourbon Room", "Room", "assets/rooms/wine-bourbon-room.png", "upper-basement", "wine-bourbon-room"],
-    ["Raised Ground Floor", "Entrance Hall", "Room", "assets/rooms/entrance-hall.png", "raised-ground", "entrance-hall"],
-    ["Raised Ground Floor", "Main Stair Hall", "Room", "assets/rooms/main-stair.png", "raised-ground", "main-stair"],
-    ["Raised Ground Floor", "Cloakroom / Guest WC", "Room", "assets/rooms/cloakroom.png", "raised-ground", "cloakroom"],
-    ["Raised Ground Floor", "Coat Cupboard", "Room", "assets/rooms/coat-cupboard.png", "raised-ground", "coat-cupboard"],
-    ["Raised Ground Floor", "Kitchen / Breakfast Room", "Room", "assets/rooms/kitchen-breakfast.png", "raised-ground", "kitchen-breakfast"],
-    ["Raised Ground Floor", "Garden Room", "Room", "assets/rooms/garden-room.png", "raised-ground", "garden-room"],
-    ["Raised Ground Floor", "Study / Library", "Room", "assets/rooms/study-library.png", "raised-ground", "study-library"],
-    ["Raised Ground Floor", "Flower Room / Garden Pantry", "Room", "assets/rooms/flower-room.png", "raised-ground", "flower-room"],
-    ["Raised Ground Floor", "Garden Lobby / Boot Room", "Room", "assets/rooms/boot-room.png", "raised-ground", "boot-room"],
-    ["Raised Ground Floor", "Rear Terrace", "Room", "assets/rooms/rear-terrace.png", "raised-ground", "rear-terrace"],
-    ["First Floor / Music Nobile", "Music Nobile Glass Threshold", "Room", "assets/rooms/music-nobile-threshold.png", "first-floor", "music-nobile-threshold"],
-    ["First Floor / Music Nobile", "Principal Salon", "Room", "assets/rooms/principal-salon.png", "first-floor", "principal-salon"],
-    ["First Floor / Music Nobile", "Music Room", "Room", "assets/rooms/music-room.png", "first-floor", "music-room"],
-    ["First Floor / Music Nobile", "Studio-Control-Listening Room", "Room", "assets/rooms/control-listening.png", "first-floor", "control-listening"],
-    ["First Floor / Music Nobile", "Dining Room / Supper Room", "Room", "assets/rooms/supper-room.png", "first-floor", "supper-room"],
-    ["Second Floor", "Second Floor Guest Overview", "Overview", "assets/rooms/second-floor-guest-overview.png", "second-floor", "principal-guest"],
-    ["Third Floor", "Third Floor Guest Overview", "Overview", "assets/rooms/third-floor-guest-overview.png", "third-floor", "guest-bedroom-4"],
-    ["Top Floor", "Private Landing / Gallery", "Room", "assets/rooms/private-landing.png", "top-floor", "private-landing"],
-    ["Top Floor", "Primary Bedroom", "Room", "assets/rooms/primary-bedroom.png", "top-floor", "primary-bedroom"],
-    ["Top Floor", "Private Lounge / Upright Piano", "Room", "assets/rooms/private-lounge.png", "top-floor", "private-lounge"],
-    ["Top Floor", "Private Suite Overview", "Overview", "assets/rooms/private-suite-overview.png", "top-floor", "daily-bathroom"],
-    ["Top Floor", "Current-Season Dressing Room", "Room", "assets/rooms/current-season-dressing.png", "top-floor", "seasonal-dressing"],
-    ["Top Floor", "Archive Wardrobe", "Room", "assets/rooms/archive-wardrobe.png", "top-floor", "archive-wardrobe"],
-    ["Top Floor", "Watch & Jewellery Safe", "Room", "assets/rooms/watch-safe.png", "top-floor", "watch-safe"],
-    ["Top Floor", "Archive Suite Overview", "Overview", "assets/rooms/top-floor-archive-suite-overview.png", "top-floor", "rare-books"],
-    ["Top Floor", "Private Roof Terrace", "Room", "assets/rooms/roof-terrace.png", "top-floor", "roof-terrace"],
+    ["Lower Basement", "Indoor Pool", "Exact room image", "assets/rooms/indoor-pool.png", "lower-basement", "indoor-pool"],
+    ["Lower Basement", "Wellness Overview", "Floor overview reference", "assets/rooms/lower-basement-wellness-overview.png", "lower-basement", "spa-lounge"],
+    ["Upper Basement / Lower Ground", "Bar / Games Room", "Exact room image", "assets/rooms/bar-games.png", "upper-basement", "bar-games"],
+    ["Upper Basement / Lower Ground", "Cinema / Screening Room", "Exact room image", "assets/rooms/cinema.png", "upper-basement", "cinema"],
+    ["Upper Basement / Lower Ground", "Wine / Bourbon Room", "Exact room image", "assets/rooms/wine-bourbon-room.png", "upper-basement", "wine-bourbon-room"],
+    ["Raised Ground Floor", "Entrance Hall", "Exact room image", "assets/rooms/entrance-hall.png", "raised-ground", "entrance-hall"],
+    ["Raised Ground Floor", "Main Stair Hall", "Exact room image", "assets/rooms/main-stair.png", "raised-ground", "main-stair"],
+    ["Raised Ground Floor", "Cloakroom / Guest WC", "Exact room image", "assets/rooms/cloakroom.png", "raised-ground", "cloakroom"],
+    ["Raised Ground Floor", "Coat Cupboard", "Exact room image", "assets/rooms/coat-cupboard.png", "raised-ground", "coat-cupboard"],
+    ["Raised Ground Floor", "Kitchen / Breakfast Room", "Exact room image", "assets/rooms/kitchen-breakfast.png", "raised-ground", "kitchen-breakfast"],
+    ["Raised Ground Floor", "Garden Room", "Exact room image", "assets/rooms/garden-room.png", "raised-ground", "garden-room"],
+    ["Raised Ground Floor", "Study / Library", "Exact room image", "assets/rooms/study-library.png", "raised-ground", "study-library"],
+    ["Raised Ground Floor", "Flower Room / Garden Pantry", "Exact room image", "assets/rooms/flower-room.png", "raised-ground", "flower-room"],
+    ["Raised Ground Floor", "Garden Lobby / Boot Room", "Exact room image", "assets/rooms/boot-room.png", "raised-ground", "boot-room"],
+    ["Raised Ground Floor", "Rear Terrace", "Exact room image", "assets/rooms/rear-terrace.png", "raised-ground", "rear-terrace"],
+    ["First Floor / Music Nobile", "Music Nobile Threshold", "Exact room image", "assets/rooms/music-nobile-threshold.png", "first-floor", "music-nobile-threshold"],
+    ["First Floor / Music Nobile", "Principal Salon", "Exact room image", "assets/rooms/principal-salon.png", "first-floor", "principal-salon"],
+    ["First Floor / Music Nobile", "Music Room", "Exact room image", "assets/rooms/music-room.png", "first-floor", "music-room"],
+    ["First Floor / Music Nobile", "Control / Listening Room", "Exact room image", "assets/rooms/control-listening.png", "first-floor", "control-listening"],
+    ["First Floor / Music Nobile", "Dining Room / Supper Room", "Exact room image", "assets/rooms/supper-room.png", "first-floor", "supper-room"],
+    ["Second Floor", "Second Floor Guest Overview", "Floor overview reference", "assets/rooms/second-floor-guest-overview.png", "second-floor", "principal-guest"],
+    ["Third Floor", "Third Floor Guest Overview", "Floor overview reference", "assets/rooms/third-floor-guest-overview.png", "third-floor", "guest-bedroom-4"],
+    ["Top Floor", "Private Landing / Gallery", "Exact room image", "assets/rooms/private-landing.png", "top-floor", "private-landing"],
+    ["Top Floor", "Primary Bedroom", "Exact room image", "assets/rooms/primary-bedroom.png", "top-floor", "primary-bedroom"],
+    ["Top Floor", "Private Lounge / Upright Piano", "Exact room image", "assets/rooms/private-lounge.png", "top-floor", "private-lounge"],
+    ["Top Floor", "Private Suite Overview", "Floor overview reference", "assets/rooms/private-suite-overview.png", "top-floor", "daily-bathroom"],
+    ["Top Floor", "Current-Season Dressing Room", "Exact room image", "assets/rooms/current-season-dressing.png", "top-floor", "seasonal-dressing"],
+    ["Top Floor", "Archive Wardrobe", "Exact room image", "assets/rooms/archive-wardrobe.png", "top-floor", "archive-wardrobe"],
+    ["Top Floor", "Watch & Jewellery Safe", "Exact room image", "assets/rooms/watch-safe.png", "top-floor", "watch-safe"],
+    ["Top Floor", "Archive Suite Overview", "Floor overview reference", "assets/rooms/top-floor-archive-suite-overview.png", "top-floor", "rare-books"],
+    ["Top Floor", "Private Roof Terrace", "Exact room image", "assets/rooms/roof-terrace.png", "top-floor", "roof-terrace"],
     ["Whole House", "Generated Room Contact Sheet", "Contact sheet", "assets/rooms/room-archive-contact-sheet.png", "tour", "atlas"]
   ],
   staff: [
@@ -236,14 +310,14 @@ const HOUSE_DATA = {
   meals: [
     ["07:30", "Breakfast", "Kitchen / Breakfast Room", "Alex table set, grapefruit, coffee, eggs on request.", "Rafael"],
     ["12:45", "Lunch", "Garden Room", "Light lunch, garden tray possible if weather holds.", "Tolly"],
-    ["18:30", "Studio Supper Prep", "First-Floor Pantry", "Cold plates, salad, pasta hold, champagne and still water.", "Crispin"],
+    ["18:30", "Music Nobile Supper Prep", "First-Floor Pantry", "Cold plates, salad, pasta hold, champagne and still water.", "Crispin"],
     ["20:15", "Dinner", "Dining Room / Supper Room", "Eight covers, candles, low florals, Wool wall light checked.", "Rafael"],
-    ["23:30", "Late Studio Food", "Music Nobile", "Toasties, fruit, water, tea and dirty-return cleared by service stair.", "Tolly"]
+    ["23:30", "Late Music Nobile Food", "Music Nobile", "Toasties, fruit, water, tea and dirty-return cleared by service stair.", "Tolly"]
   ],
   bookingSpaces: [
     "Music Nobile",
     "Music Room",
-    "Studio-Control-Listening Room",
+    "Control / Listening Room",
     "Dining Room / Supper Room",
     "Cinema / Screening Room",
     "Bar / Games Room",

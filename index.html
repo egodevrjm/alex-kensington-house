@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kensington House</title>
+    <title>Albury House</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -12,8 +12,8 @@
         <div class="brand">
           <span class="brand-mark">K</span>
           <div>
-            <strong>Kensington House</strong>
-            <span>30 Upper Phillimore Gardens</span>
+            <strong id="brandName">Albury House</strong>
+            <span id="brandSubtitle">Private house intranet</span>
           </div>
         </div>
         <nav class="nav-list" id="navList"></nav>
@@ -83,6 +83,14 @@
               <div id="dashboardArrivals" class="stack-list"></div>
             </section>
 
+            <section class="panel wide">
+              <div class="panel-head">
+                <h2>Floor Guide</h2>
+                <button class="icon-button" data-jump="tour" aria-label="Open tour">+</button>
+              </div>
+              <div id="dashboardFloorGuide" class="floor-guide-map"></div>
+            </section>
+
             <section class="panel wide image-panel">
               <div class="panel-head">
                 <h2>Image Core</h2>
@@ -94,7 +102,7 @@
             <section class="panel wide">
               <div class="panel-head">
                 <h2>Room Readiness</h2>
-                <span class="subtle">Guest floors, studio and wellness</span>
+                <span class="subtle">Guest floors, music floor and wellness</span>
               </div>
               <div id="readinessGrid" class="readiness-grid"></div>
             </section>
@@ -117,11 +125,12 @@
               <article class="atlas-stage" id="atlasStage">
                 <div class="section-head">
                   <div>
-                    <p class="overline">Kensington Townhouse</p>
+                    <p class="overline">Albury House</p>
                     <h2>Full House Atlas</h2>
                   </div>
                   <span class="pill">7 levels</span>
                 </div>
+                <div id="atlasFloorGuide" class="floor-guide-map compact"></div>
                 <div id="atlasImage"></div>
                 <div class="atlas-notes">
                   <article><strong>Floor key</strong><span>4 top floor, 3 third, 2 second, 1 first, G raised ground, -1 upper basement, -2 lower basement</span></article>
@@ -182,7 +191,7 @@
             <section>
               <div class="section-head">
                 <div>
-                  <p class="overline">Rooms, Studio and Events</p>
+                  <p class="overline">Rooms, Music Nobile and Events</p>
                   <h2 id="bookingsTitle">Room Booking</h2>
                 </div>
               </div>

@@ -5,18 +5,26 @@ const state = {
   showAtlas: true,
   staffFilter: "All",
   imageFilter: "All",
-  mode: localStorage.getItem("kensington.mode") || "residence",
+  mode: localStorage.getItem("albury.mode") || localStorage.getItem("kensington.mode") || "residence",
   bookings: loadBookings()
 };
 
 function loadBookings() {
-  const saved = localStorage.getItem("kensington.bookings");
-  if (saved) return JSON.parse(saved);
-  return HOUSE_DATA.bookings.map(([date, time, space, host, setup]) => ({ date, time, space, host, setup }));
+  const saved = localStorage.getItem("albury.bookings") || localStorage.getItem("kensington.bookings");
+  if (saved) return JSON.parse(saved).map(normalizeBooking);
+  return HOUSE_DATA.bookings.map(([date, time, space, host, setup]) => normalizeBooking({ date, time, space, host, setup }));
 }
 
 function saveBookings() {
-  localStorage.setItem("kensington.bookings", JSON.stringify(state.bookings));
+  localStorage.setItem("albury.bookings", JSON.stringify(state.bookings));
+}
+
+function normalizeBooking(booking) {
+  return {
+    ...booking,
+    space: String(booking.space || "").replaceAll("AL.X Studio", "Music Nobile").replaceAll("Studio-Control-Listening Room", "Control / Listening Room"),
+    setup: String(booking.setup || "").replaceAll("AL.X Studio", "Music Nobile").replaceAll("AL.X", "Music Nobile").replaceAll("studio", "music floor")
+  };
 }
 
 function $(selector) {
@@ -40,6 +48,10 @@ function imageBlock(src, label) {
     wrapper.innerHTML = "";
     wrapper.appendChild(image);
   };
+  image.onerror = () => {
+    wrapper.classList.add("missing");
+    wrapper.innerHTML = `<span>${label}</span><small>Asset pending</small>`;
+  };
   wrapper.innerHTML = `<span>${label}</span><small>Image pending</small>`;
   return wrapper;
 }
@@ -58,6 +70,9 @@ function formatDateLabel() {
 }
 
 function init() {
+  document.title = HOUSE_DATA.houseName;
+  $("#brandName").textContent = HOUSE_DATA.houseName;
+  $("#brandSubtitle").textContent = HOUSE_DATA.houseSubtitle;
   $("#currentDate").textContent = formatDateLabel();
   renderNav();
   renderModeSelect();
@@ -77,7 +92,7 @@ function init() {
 function bindEvents() {
   $("#houseModeSelect").addEventListener("change", (event) => {
     state.mode = event.target.value;
-    localStorage.setItem("kensington.mode", state.mode);
+    localStorage.setItem("albury.mode", state.mode);
     renderDashboard();
   });
 
@@ -172,6 +187,8 @@ function renderDashboard() {
     grid.appendChild(card);
   });
 
+  renderFloorGuide("#dashboardFloorGuide", "dashboard");
+
   const strip = $("#dashboardImageStrip");
   strip.innerHTML = "";
   HOUSE_DATA.featureImages.forEach(([floor, label, type, image, floorId, roomId]) => {
@@ -197,9 +214,10 @@ function renderMiniList(selector, items) {
 
 function renderTour() {
   $("#atlasImage").innerHTML = "";
-  $("#atlasImage").appendChild(imageBlock("assets/atlas/kensington-townhouse-atlas.png", "Kensington Townhouse Atlas"));
+  $("#atlasImage").appendChild(imageBlock("assets/atlas/albury-house-atlas.png", "Albury House Atlas"));
   $("#atlasStage").classList.toggle("active", state.showAtlas);
   $("#atlasButton").classList.toggle("active", state.showAtlas);
+  renderFloorGuide("#atlasFloorGuide", "atlas");
 
   const floorButtons = $("#floorButtons");
   floorButtons.innerHTML = "";
@@ -231,7 +249,8 @@ function renderTour() {
     const card = create("button", id === state.roomId ? "room-card active" : "room-card");
     card.appendChild(imageBlock(image, name));
     const copy = create("span", "room-card-copy");
-    copy.innerHTML = `<strong>${name}</strong><small>${description}</small>`;
+    const match = imageMatchForRoom(image, name);
+    copy.innerHTML = `<strong>${name}</strong><small>${description}</small><em class="${match.className}">${match.label}</em>`;
     card.appendChild(copy);
     card.addEventListener("click", () => {
       state.roomId = id;
@@ -246,6 +265,8 @@ function renderTour() {
 function renderRoomDetail(floor) {
   const room = floor.rooms.find((item) => item[0] === state.roomId) || floor.rooms[0];
   const [id, name, description, image] = room;
+  const match = imageMatchForRoom(image, name);
+  const roomOps = roomDetailFor(id, floor);
   const detail = $("#roomDetail");
   detail.innerHTML = "";
   detail.appendChild(imageBlock(image, name));
@@ -254,13 +275,90 @@ function renderRoomDetail(floor) {
     <p class="overline">${floor.name}</p>
     <h2>${name}</h2>
     <p>${description}</p>
+    <div class="detail-tags">
+      <span>${floor.role}</span>
+      <span>${match.label}</span>
+      <span>${roomOps.owner}</span>
+    </div>
     <dl>
+      <div><dt>Use</dt><dd>${roomOps.use}</dd></div>
+      <div><dt>Readiness</dt><dd>${roomOps.readiness}</dd></div>
+      <div><dt>Service note</dt><dd>${roomOps.service}</dd></div>
       <div><dt>Image path</dt><dd>${image}</dd></div>
       <div><dt>Room key</dt><dd>${id}</dd></div>
       <div><dt>Access</dt><dd>${floor.id.includes("basement") ? "Service route available" : floor.id === "first-floor" ? "Main stair or service stair" : "Main stair and lift"}</dd></div>
     </dl>
   `;
   detail.appendChild(body);
+}
+
+function renderFloorGuide(selector, variant) {
+  const container = $(selector);
+  container.innerHTML = "";
+  HOUSE_DATA.floorGuide.forEach((floor) => {
+    const button = create("button", floor.id === state.floorId && !state.showAtlas ? "active" : "");
+    button.innerHTML = `
+      <span class="floor-key">${floor.key}</span>
+      <span class="floor-guide-copy">
+        <strong>${floor.name}</strong>
+        <small>${floor.role}</small>
+        <em>${floor.zone} / ${floor.stats}</em>
+      </span>
+    `;
+    button.addEventListener("click", () => {
+      state.floorId = floor.id;
+      state.roomId = HOUSE_DATA.floors.find((item) => item.id === floor.id).rooms[0][0];
+      state.showAtlas = false;
+      if (variant === "dashboard") setView("tour");
+      renderTour();
+    });
+    container.appendChild(button);
+  });
+}
+
+function imageMatchForRoom(image, roomName) {
+  const archiveMatch = HOUSE_DATA.imageArchive.find(([, label, type, archiveImage]) => archiveImage === image && label === roomName);
+  if (archiveMatch) return { label: archiveMatch[2], className: "match-exact" };
+
+  const overviewMatch = HOUSE_DATA.imageArchive.find(([, , type, archiveImage]) => archiveImage === image && type.includes("overview"));
+  if (overviewMatch) return { label: overviewMatch[2], className: "match-overview" };
+
+  const anyMatch = HOUSE_DATA.imageArchive.find(([, , , archiveImage]) => archiveImage === image);
+  if (anyMatch) return { label: "Shared reference image", className: "match-reference" };
+
+  return { label: "Asset pending", className: "match-pending" };
+}
+
+function roomDetailFor(roomId, floor) {
+  const details = {
+    "entrance-hall": ["Primary arrival, flowers, art first impression.", "Front-door ready; guest coats route to cloak storage.", "Crispin handles arrivals; security monitors pavement."],
+    "kitchen-breakfast": ["Daily heart of the house and informal meals.", "Breakfast table, coffee, still water, garden door check.", "Chef and steward use service path when occupied."],
+    "music-room": ["Bechstein-led writing, rehearsal and live capture.", "Piano humidity checked; scores and mic points ready.", "Engineers route through Music Nobile threshold or service stair."],
+    "control-listening": ["Playback, monitoring, turntables and rough cut review.", "Console clear; monitors and patching ready.", "Imogen owns AV support and session reset."],
+    "supper-room": ["Private dinners, artist meals and post-session food.", "Candles, linen, glassware, acoustic comfort.", "Pantry supports light service; kitchen supports heavy prep."],
+    "indoor-pool": ["Swimming, recovery and late-night quiet.", "Water, towels and humidity checked.", "Leander owns chemistry and air handling."],
+    "bar-games": ["Nocturnal house mode, games and private drinks.", "Bar stocked; lamps low; glassware checked.", "Crispin or temporary bar staff run service."],
+    "cinema": ["Films, concert footage, screenings and rough cuts.", "AV, blackout and refreshment cabinet ready.", "Imogen checks media before guest use."],
+    "archive-wardrobe": ["Museum-grade fashion archive and fittings context.", "Humidity, low light and handling protocols active.", "Honor oversees conservation access."],
+    "roof-terrace": ["Private air, coffee, champagne and skyline pause.", "Weather, blankets, lanterns and terrace bar checked.", "Garden and service teams reset discreetly."]
+  };
+  const [use, readiness, service] = details[roomId] || [
+    `${floor.role} support space within ${floor.name}.`,
+    "Check lighting, climate, surfaces and guest-facing details before use.",
+    floor.id === "first-floor" ? "Service stair keeps staff and musicians off the family route." : "House team routes support according to current house mode."
+  ];
+
+  const ownerByFloor = {
+    "lower-basement": "Wellness / systems",
+    "upper-basement": "House operations",
+    "raised-ground": "House manager",
+    "first-floor": "Music Nobile",
+    "second-floor": "Housekeeping",
+    "third-floor": "Housekeeping",
+    "top-floor": "Private suite"
+  };
+
+  return { use, readiness, service, owner: ownerByFloor[floor.id] || "House" };
 }
 
 function openTourRoom(floorId, roomId) {

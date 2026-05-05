@@ -1,4 +1,4 @@
-# Kensington Room Image Labels
+# Albury House Room Image Labels
 
 These files were renamed from the dumped ChatGPT image exports into stable room-oriented names.
 
@@ -16,10 +16,10 @@ These files were renamed from the dumped ChatGPT image exports into stable room-
 | `flower-room.png` | Flower Room / Garden Pantry |
 | `boot-room.png` | Garden Lobby / Boot Room |
 | `rear-terrace.png` | Rear Terrace / Garden-facing dining |
-| `music-nobile-threshold.png` | Music Nobile Glass Threshold |
+| `music-nobile-threshold.png` | Music Nobile Threshold |
 | `principal-salon.png` | Principal Salon / Drawing Room |
 | `music-room.png` | Music Room with grand piano |
-| `control-listening.png` | Studio-Control-Listening Room |
+| `control-listening.png` | Control / Listening Room |
 | `supper-room.png` | Dining Room / Supper Room |
 | `bar-games.png` | Bar / Games Room |
 | `cinema.png` | Cinema / Screening Room |

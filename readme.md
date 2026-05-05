@@ -1,6 +1,6 @@
-# Kensington House
+# Albury House
 
-Private house intranet web app for the Kensington townhouse.
+Private house intranet web app for Albury House.
 
 ## Open
 
@@ -10,7 +10,7 @@ Open `index.html` in a browser.
 
 The full-house atlas image is read from:
 
-- `assets/atlas/kensington-townhouse-atlas.png`
+- `assets/atlas/albury-house-atlas.png`
 
 Per-floor atlas crops are read from:
 
@@ -61,7 +61,7 @@ To connect from an HTTP-capable MCP client:
 ```json
 {
   "mcpServers": {
-    "kensington-house": {
+    "albury-house": {
       "url": "https://<your-site>.netlify.app/mcp"
     }
   }
