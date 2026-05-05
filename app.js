@@ -5,6 +5,7 @@ const state = {
   showAtlas: true,
   staffFilter: "All",
   imageFilter: "All",
+  systemsFilter: "All",
   modalTarget: null,
   mode: localStorage.getItem("albury.mode") || localStorage.getItem("kensington.mode") || "residence",
   bookings: loadBookings()
@@ -106,6 +107,7 @@ function init() {
   renderDashboard();
   renderTour();
   renderImageArchive();
+  renderSystems();
   renderStaff();
   renderMeals();
   renderBookings();
@@ -227,6 +229,13 @@ function renderDashboard() {
   });
 
   renderFloorGuide("#dashboardFloorGuide", "dashboard");
+
+  const systems = allRoomSystems();
+  renderMiniList("#dashboardSystems", systems.slice(0, 4).map((system) => ({
+    title: `${system.room_name} ${system.temperature}`,
+    meta: `${system.floor_name} / ${system.scent}`,
+    note: `${system.music} with ${system.ambient_noise.toLowerCase()}`
+  })));
 
   const strip = $("#dashboardImageStrip");
   strip.innerHTML = "";
@@ -477,6 +486,8 @@ function renderRoomDetail(floor) {
       <div><dt>Use</dt><dd>${roomOps.use}</dd></div>
       <div><dt>Readiness</dt><dd>${roomOps.readiness}</dd></div>
       <div><dt>Service note</dt><dd>${roomOps.service}</dd></div>
+      <div><dt>Digital panel</dt><dd>${roomOps.system.panel_id} online / Assistant: ${roomOps.system.assistant}</dd></div>
+      <div><dt>Room scene</dt><dd>${roomOps.system.temperature}, ${roomOps.system.scent}, ${roomOps.system.ambient_noise}</dd></div>
       <div><dt>Image path</dt><dd>${image}</dd></div>
       <div><dt>Room key</dt><dd>${id}</dd></div>
       <div><dt>Access</dt><dd>${floor.id.includes("basement") ? "Service route available" : floor.id === "first-floor" ? "Main stair or service stair" : "Main stair and lift"}</dd></div>
@@ -551,7 +562,38 @@ function roomDetailFor(roomId, floor) {
     "top-floor": "Private suite"
   };
 
-  return { use, readiness, service, owner: ownerByFloor[floor.id] || "House" };
+  return { use, readiness, service, owner: ownerByFloor[floor.id] || "House", system: roomSystemFor(roomId, floor) };
+}
+
+function allRoomSystems() {
+  return HOUSE_DATA.floors.flatMap((floor) => floor.rooms.map(([id, name]) => roomSystemFor(id, floor, name)));
+}
+
+function roomSystemFor(roomId, floor, roomName) {
+  const room = floor.rooms.find(([id]) => id === roomId);
+  const defaults = HOUSE_DATA.smartHome.floorDefaults[floor.id] || ["20.5 C", "House neutral", "Balanced air", "House quiet", "Soft hush"];
+  const settings = HOUSE_DATA.smartHome.roomOverrides[roomId] || defaults;
+  const roomIndex = floor.rooms.findIndex(([id]) => id === roomId) + 1;
+  const rawFloorKey = HOUSE_DATA.floorGuide.find((item) => item.id === floor.id)?.key || floor.id.slice(0, 2).toUpperCase();
+  const floorKey = rawFloorKey.startsWith("-") ? `B${rawFloorKey.slice(1)}` : rawFloorKey;
+  return {
+    room_id: roomId,
+    room_name: roomName || room?.[1] || roomId,
+    floor_id: floor.id,
+    floor_name: floor.name,
+    panel_id: `AH-${floorKey}-${String(roomIndex).padStart(2, "0")}`,
+    assistant: HOUSE_DATA.smartHome.assistantName,
+    network: HOUSE_DATA.smartHome.network,
+    status: "Panel online",
+    temperature: settings[0],
+    scent: settings[1],
+    air: settings[2],
+    music: settings[3],
+    ambient_noise: settings[4],
+    lighting: floor.id === "upper-basement" ? "Evening low scene" : floor.id === "top-floor" ? "Private warm scene" : "Adaptive house scene",
+    privacy: floor.id === "top-floor" ? "Private access" : floor.id.includes("basement") ? "Service-aware" : "Guest-aware",
+    service_route: floor.id === "first-floor" || floor.id.includes("basement") ? "Service stair available" : "Main stair and lift"
+  };
 }
 
 function openTourRoom(floorId, roomId) {
@@ -616,6 +658,56 @@ function renderImageArchive() {
     copy.innerHTML = `<strong>${label}</strong><small>${floor} / ${type}</small><em>${image}</em>`;
     card.appendChild(copy);
     card.addEventListener("click", () => openTourRoom(floorId, roomId));
+    grid.appendChild(card);
+  });
+}
+
+function renderSystems() {
+  const filters = ["All", ...HOUSE_DATA.floorGuide.map((floor) => floor.name)];
+  const filterRow = $("#systemsFilters");
+  filterRow.innerHTML = "";
+  filters.forEach((floorName) => {
+    const button = create("button", floorName === state.systemsFilter ? "active" : "", floorName);
+    button.addEventListener("click", () => {
+      state.systemsFilter = floorName;
+      renderSystems();
+    });
+    filterRow.appendChild(button);
+  });
+
+  const systems = allRoomSystems().filter((system) => state.systemsFilter === "All" || system.floor_name === state.systemsFilter);
+  $("#systemsCount").textContent = `${systems.length} panel${systems.length === 1 ? "" : "s"} online`;
+  $("#systemsOverview").textContent = HOUSE_DATA.smartHome.overview;
+  $("#systemsAssistant").textContent = HOUSE_DATA.smartHome.assistantName;
+  $("#systemsNetwork").textContent = HOUSE_DATA.smartHome.network;
+  $("#systemsCapabilityCount").textContent = `${HOUSE_DATA.smartHome.capabilities.length} control layers`;
+
+  const capabilityGrid = $("#systemsCapabilityGrid");
+  capabilityGrid.innerHTML = "";
+  HOUSE_DATA.smartHome.capabilities.forEach(([id, name, detail]) => {
+    const card = create("article", "capability-card");
+    card.innerHTML = `<strong>${name}</strong><span>${id}</span><p>${detail}</p>`;
+    capabilityGrid.appendChild(card);
+  });
+
+  const grid = $("#systemsGrid");
+  grid.innerHTML = "";
+  systems.forEach((system) => {
+    const card = create("button", "system-card");
+    card.innerHTML = `
+      <span class="system-panel-id">${system.panel_id}</span>
+      <h3>${system.room_name}</h3>
+      <small>${system.floor_name} / ${system.status}</small>
+      <div class="system-readout">
+        <div><span>Temp</span><strong>${system.temperature}</strong></div>
+        <div><span>Scent</span><strong>${system.scent}</strong></div>
+        <div><span>Air</span><strong>${system.air}</strong></div>
+        <div><span>Music</span><strong>${system.music}</strong></div>
+        <div><span>Noise</span><strong>${system.ambient_noise}</strong></div>
+        <div><span>Privacy</span><strong>${system.privacy}</strong></div>
+      </div>
+    `;
+    card.addEventListener("click", () => openTourRoom(system.floor_id, system.room_id));
     grid.appendChild(card);
   });
 }

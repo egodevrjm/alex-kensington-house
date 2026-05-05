@@ -71,6 +71,36 @@ function shapeImage([floor, label, kind, src, floorId, roomId]) {
   return { floor, label, kind, src, floor_id: floorId, room_id: roomId };
 }
 
+function roomSystemFor(data, roomId, floor, roomName) {
+  const defaults = data.smartHome?.floorDefaults?.[floor.id] || ['20.5 C', 'House neutral', 'Balanced air', 'House quiet', 'Soft hush'];
+  const settings = data.smartHome?.roomOverrides?.[roomId] || defaults;
+  const roomIndex = floor.rooms.findIndex(([id]) => id === roomId) + 1;
+  const rawFloorKey = data.floorGuide.find((item) => item.id === floor.id)?.key || floor.id.slice(0, 2).toUpperCase();
+  const floorKey = rawFloorKey.startsWith('-') ? `B${rawFloorKey.slice(1)}` : rawFloorKey;
+  return {
+    room_id: roomId,
+    room_name: roomName,
+    floor_id: floor.id,
+    floor_name: floor.name,
+    panel_id: `AH-${floorKey}-${String(roomIndex).padStart(2, '0')}`,
+    assistant: data.smartHome?.assistantName || 'Albury',
+    network: data.smartHome?.network || 'Private house mesh',
+    status: 'Panel online',
+    temperature: settings[0],
+    scent: settings[1],
+    air: settings[2],
+    music: settings[3],
+    ambient_noise: settings[4],
+    lighting: floor.id === 'upper-basement' ? 'Evening low scene' : floor.id === 'top-floor' ? 'Private warm scene' : 'Adaptive house scene',
+    privacy: floor.id === 'top-floor' ? 'Private access' : floor.id.includes('basement') ? 'Service-aware' : 'Guest-aware',
+    service_route: floor.id === 'first-floor' || floor.id.includes('basement') ? 'Service stair available' : 'Main stair and lift',
+  };
+}
+
+function allRoomSystems(data) {
+  return data.floors.flatMap((floor) => floor.rooms.map(([id, name]) => roomSystemFor(data, id, floor, name)));
+}
+
 const TOOLS = [
   {
     name: 'house_overview',
@@ -82,6 +112,12 @@ const TOOLS = [
       sections: data.nav.map(([id, label]) => ({ id, label })),
       modes: data.modes,
       floor_guide: data.floorGuide,
+      smart_home: {
+        assistant: data.smartHome.assistantName,
+        network: data.smartHome.network,
+        overview: data.smartHome.overview,
+        capabilities: data.smartHome.capabilities,
+      },
       feature_rooms: data.featureImages.map(([floor, room, caption, image, floorId, roomId]) => ({
         floor, room, caption, image, floor_id: floorId, room_id: roomId,
       })),
@@ -240,6 +276,46 @@ const TOOLS = [
     handler: (data) => data.manual.map(shapeManual),
   },
   {
+    name: 'list_control_capabilities',
+    description: 'Return the whole-house digital control layers: temperature, scent, air, music, ambient noise, lighting, privacy and service.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    handler: (data) => ({
+      assistant: data.smartHome.assistantName,
+      network: data.smartHome.network,
+      overview: data.smartHome.overview,
+      capabilities: data.smartHome.capabilities.map(([id, name, description]) => ({ id, name, description })),
+    }),
+  },
+  {
+    name: 'list_room_systems',
+    description: 'List digital control panel profiles for every room. Optionally filter by floor id.',
+    inputSchema: {
+      type: 'object',
+      properties: { floor_id: { type: 'string', description: 'Optional floor id to filter by.' } },
+      additionalProperties: false,
+    },
+    handler: (data, args = {}) => {
+      let systems = allRoomSystems(data);
+      if (args.floor_id) systems = systems.filter((system) => system.floor_id === args.floor_id);
+      return systems;
+    },
+  },
+  {
+    name: 'get_room_system',
+    description: 'Get the digital control panel profile for a single room.',
+    inputSchema: {
+      type: 'object',
+      required: ['room_id'],
+      properties: { room_id: { type: 'string' } },
+      additionalProperties: false,
+    },
+    handler: (data, { room_id }) => {
+      const system = allRoomSystems(data).find((item) => item.room_id === room_id);
+      if (!system) throw new Error(`Unknown room system: ${room_id}`);
+      return system;
+    },
+  },
+  {
     name: 'list_house_modes',
     description: 'Return the operating modes of the house (Residence, Away, Music Nobile, Event, Quiet).',
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
@@ -270,6 +346,7 @@ const RESOURCES = [
   { uri: 'house://floor-guide', name: 'Floor Guide', description: 'Interactive floor guide metadata.', mimeType: 'application/json' },
   { uri: 'house://floors', name: 'Floors', description: 'All floors with their rooms.', mimeType: 'application/json' },
   { uri: 'house://images', name: 'Image Archive', description: 'Room and overview image archive.', mimeType: 'application/json' },
+  { uri: 'house://systems', name: 'Digital Room Systems', description: 'Smart assistant and room control panel profiles.', mimeType: 'application/json' },
   { uri: 'house://staff', name: 'Staff Directory', description: 'Full staff list.', mimeType: 'application/json' },
   { uri: 'house://meals', name: 'Meals Schedule', description: 'Today\'s meal service.', mimeType: 'application/json' },
   { uri: 'house://bookings', name: 'Bookings', description: 'Room bookings and bookable spaces.', mimeType: 'application/json' },
@@ -289,6 +366,12 @@ function readResource(data, uri) {
         sections: data.nav.map(([id, label]) => ({ id, label })),
         modes: data.modes,
         floor_guide: data.floorGuide,
+        smart_home: {
+          assistant: data.smartHome.assistantName,
+          network: data.smartHome.network,
+          overview: data.smartHome.overview,
+          capabilities: data.smartHome.capabilities,
+        },
       };
     case 'house://floor-guide':
       return data.floorGuide;
@@ -301,6 +384,14 @@ function readResource(data, uri) {
       return data.staff.map(shapeStaff);
     case 'house://images':
       return data.imageArchive.map(shapeImage);
+    case 'house://systems':
+      return {
+        assistant: data.smartHome.assistantName,
+        network: data.smartHome.network,
+        overview: data.smartHome.overview,
+        capabilities: data.smartHome.capabilities.map(([id, name, description]) => ({ id, name, description })),
+        rooms: allRoomSystems(data),
+      };
     case 'house://meals':
       return data.meals.map(shapeMeal);
     case 'house://bookings':
@@ -341,7 +432,7 @@ function handleRpc(message, data) {
           resources: { listChanged: false, subscribe: false },
         },
         instructions:
-          'Albury House intranet MCP. Use tools to query floors, rooms, images, staff, meals, bookings, wellness, arrivals, collections, and the house manual. Resources are also available under house://*.',
+          'Albury House intranet MCP. Use tools to query floors, rooms, digital room systems, images, staff, meals, bookings, wellness, arrivals, collections, and the house manual. Resources are also available under house://*.',
       });
 
     case 'ping':

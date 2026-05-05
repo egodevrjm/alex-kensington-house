@@ -43,6 +43,7 @@ The current image labels are documented in `assets/rooms/room_image_labels.md`.
 - Dashboard
 - House Tour
 - Image Archive
+- Digital Systems
 - Staff Directory
 - Meals Schedule
 - Room Booking
@@ -57,8 +58,8 @@ Bookings and house mode are stored in browser local storage.
 
 A Model Context Protocol server is exposed at `/mcp` (POST, JSON-RPC 2.0,
 streamable-HTTP transport). It surfaces the house data — floors, rooms, staff,
-meals, bookings, wellness, arrivals, readiness, collections and the manual — as
-MCP tools and `house://*` resources.
+meals, bookings, digital room systems, wellness, arrivals, readiness,
+collections and the manual — as MCP tools and `house://*` resources.
 
 To connect from an HTTP-capable MCP client:
 

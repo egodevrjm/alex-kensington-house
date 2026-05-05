@@ -5,6 +5,7 @@ const HOUSE_DATA = {
     ["dashboard", "Dashboard"],
     ["tour", "House Tour"],
     ["images", "Images"],
+    ["systems", "Systems"],
     ["staff", "Staff"],
     ["meals", "Meals"],
     ["bookings", "Bookings"],
@@ -288,6 +289,50 @@ const HOUSE_DATA = {
     ["Top Floor", "Private Roof Terrace", "Exact room image", "assets/rooms/roof-terrace.png", "top-floor", "roof-terrace"],
     ["Whole House", "Generated Room Contact Sheet", "Contact sheet", "assets/rooms/room-archive-contact-sheet.png", "tour", "atlas"]
   ],
+  smartHome: {
+    assistantName: "Albury",
+    network: "Private house mesh",
+    overview: "Every room has a discreet wall control panel and room-aware smart assistant for climate, scent, air, music, ambient noise, lighting and service requests.",
+    capabilities: [
+      ["temperature", "Temperature", "Room-level heating, cooling, underfloor warmth and fireplace lockouts where fitted."],
+      ["scent", "Scent Profile", "Low-diffusion house scent presets by room type, with archive and wellness exceptions."],
+      ["air", "Air Quality", "Fresh-air rate, filtration, humidity and CO2 monitoring tied to occupancy."],
+      ["music", "Music", "Room or grouped playback through concealed speakers and specialist Music Nobile routing."],
+      ["ambient_noise", "Ambient Noise", "Privacy masking, rain, fire, garden, pool or quiet-house acoustic beds."],
+      ["lighting", "Lighting", "Scene-led architectural, task, evening and night lighting."],
+      ["privacy", "Privacy", "Do-not-disturb state, guest lockout and staff/service visibility."],
+      ["service", "Service Call", "Room-specific requests routed to house, kitchen, wellness, security or music staff."]
+    ],
+    floorDefaults: {
+      "lower-basement": ["21.0 C", "Mineral eucalyptus", "Spa filtration / humidity managed", "Wellness low tempo", "Water hush"],
+      "upper-basement": ["20.0 C", "Tobacco cedar", "Event extract / fresh-air boost", "Late bar or cinema", "Club room hush"],
+      "raised-ground": ["21.5 C", "Green fig", "Fresh-air balanced", "House morning mix", "Garden air"],
+      "first-floor": ["20.5 C", "Amber cedar", "Studio-grade fresh air", "Music Nobile routing", "Acoustic privacy mask"],
+      "second-floor": ["20.0 C", "Clean linen", "Guest comfort mode", "Guest room soft playlist", "Soft rain"],
+      "third-floor": ["20.0 C", "Clean linen", "Guest comfort mode", "Guest room soft playlist", "Soft rain"],
+      "top-floor": ["20.5 C", "Hinoki smoke", "Private suite balanced", "Private library / piano", "City hush"]
+    },
+    roomOverrides: {
+      "archive-wardrobe": ["18.0 C", "Scent disabled", "Archive humidity 45-50%", "Playback disabled", "Silent archive"],
+      "rare-books": ["18.5 C", "Scent disabled", "Archive humidity 45-50%", "Playback disabled", "Silent archive"],
+      "watch-safe": ["19.0 C", "Scent disabled", "Secure dry air", "Playback disabled", "Silent secure room"],
+      "music-room": ["20.0 C", "Amber cedar low", "Studio quiet fresh air", "Session input / Bechstein mic preset", "Acoustic isolation"],
+      "control-listening": ["20.0 C", "Amber cedar low", "Studio quiet fresh air", "Reference monitors / turntables", "Playback silence"],
+      "supper-room": ["21.0 C", "Low amber resin", "Dinner occupancy boost", "Dinner / post-session", "Soft table privacy"],
+      "cinema": ["19.5 C", "Dark cedar", "Silent air / blackout mode", "Cinema Atmos", "Blackout acoustic hush"],
+      "bar-games": ["20.0 C", "Tobacco cedar", "Event extract", "Bar late", "Low club murmur"],
+      "indoor-pool": ["29.0 C water / 30.0 C air", "Mineral eucalyptus", "Pool humidity active", "Pool calm", "Water hush"],
+      "steam-room": ["Steam cycle", "Eucalyptus", "Steam extract", "Spa off", "Steam hush"],
+      "cold-plunge": ["8.0 C water", "Mineral mint", "Fresh-air boost", "Spa off", "Water hush"],
+      "treatment-room": ["22.5 C", "Lavender mineral", "Treatment quiet air", "Treatment calm", "Breathwork"],
+      "gym": ["19.0 C", "Citrus mineral", "High fresh-air rate", "Training", "Energy low"],
+      "kitchen-breakfast": ["21.0 C", "Green fig / coffee safe", "Kitchen extract linked", "Morning kitchen", "Garden air"],
+      "garden-room": ["21.5 C", "Green fig", "Garden fresh air", "Afternoon house", "Garden air"],
+      "primary-bedroom": ["19.0 C", "Hinoki smoke low", "Sleep air", "Private sleep", "City hush"],
+      "private-lounge": ["20.5 C", "Hinoki smoke", "Private library / piano", "Private library / piano", "Fire hush"],
+      "roof-terrace": ["Weather-led", "Outdoor scent disabled", "Outdoor sensors", "Terrace group", "City air"]
+    }
+  },
   staff: [
     ["House", "Ottilie Marchant", "House Manager / Knight Frank Lead", "Overall running of the house, contractors, budgets, readiness and inspections.", "On duty"],
     ["House", "Kit Peverell", "Deputy House Manager", "Deliveries, room readiness, event prep, guest movement and staff rota.", "On duty"],
@@ -380,7 +425,8 @@ const HOUSE_DATA = {
     ["Art and Light", "No unscheduled movement. Lighting levels and UV exposure remain under consultant settings."],
     ["Wellness", "Pool, sauna, steam and cold plunge require daily checks before guest use."],
     ["Guest Floors", "Guest bedrooms reset daily when occupied. Luggage, flowers, water and climate are checked before arrival."],
-    ["House Tone", "Ready, private, warm and calm. Competence should be felt before it is seen."]
+    ["House Tone", "Ready, private, warm and calm. Competence should be felt before it is seen."],
+    ["Digital Room Controls", "Every room has a discreet control panel and Albury smart assistant. Room scenes may adjust temperature, scent, air quality, music, ambient noise, lighting, privacy and service calls."]
   ]
 };
 

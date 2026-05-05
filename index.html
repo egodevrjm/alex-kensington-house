@@ -83,6 +83,14 @@
               <div id="dashboardArrivals" class="stack-list"></div>
             </section>
 
+            <section class="panel">
+              <div class="panel-head">
+                <h2>Digital Systems</h2>
+                <button class="icon-button" data-jump="systems" aria-label="Open systems">+</button>
+              </div>
+              <div id="dashboardSystems" class="stack-list"></div>
+            </section>
+
             <section class="panel wide">
               <div class="panel-head">
                 <h2>Floor Guide</h2>
@@ -162,6 +170,29 @@
           </div>
           <div id="imageFilters" class="filter-row"></div>
           <div id="imageArchiveGrid" class="image-archive-grid"></div>
+        </section>
+
+        <section class="view" id="systemsView" aria-labelledby="systemsTitle">
+          <div class="section-head">
+            <div>
+              <p class="overline">Integrated Room Control</p>
+              <h2 id="systemsTitle">Digital Systems</h2>
+            </div>
+            <span class="pill" id="systemsCount">0 panels online</span>
+          </div>
+          <section class="systems-hero">
+            <div>
+              <p id="systemsOverview"></p>
+              <div class="system-metrics">
+                <article><span id="systemsAssistant">Albury</span><small>Assistant</small></article>
+                <article><span id="systemsNetwork">Private house mesh</span><small>Network</small></article>
+                <article><span id="systemsCapabilityCount">0 control layers</span><small>Capabilities</small></article>
+              </div>
+            </div>
+          </section>
+          <div id="systemsCapabilityGrid" class="systems-capability-grid"></div>
+          <div id="systemsFilters" class="filter-row"></div>
+          <div id="systemsGrid" class="systems-grid"></div>
         </section>
 
         <section class="view" id="staffView" aria-labelledby="staffTitle">
