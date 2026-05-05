@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const PROTOCOL_VERSION = '2025-03-26';
-const SERVER_INFO = { name: 'kensington-house-mcp', version: '1.0.0' };
+const SERVER_INFO = { name: 'albury-house-mcp', version: '1.0.0' };
 
 let cachedData = null;
 function loadHouseData() {
@@ -74,11 +74,14 @@ function shapeImage([floor, label, kind, src, floorId, roomId]) {
 const TOOLS = [
   {
     name: 'house_overview',
-    description: 'High-level overview of the Kensington House: navigation sections, operating modes, and feature rooms.',
+    description: 'High-level overview of Albury House: navigation sections, operating modes, floor guide, and feature rooms.',
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
     handler: (data) => ({
+      house_name: data.houseName,
+      subtitle: data.houseSubtitle,
       sections: data.nav.map(([id, label]) => ({ id, label })),
       modes: data.modes,
+      floor_guide: data.floorGuide,
       feature_rooms: data.featureImages.map(([floor, room, caption, image, floorId, roomId]) => ({
         floor, room, caption, image, floor_id: floorId, room_id: roomId,
       })),
@@ -91,6 +94,12 @@ const TOOLS = [
     handler: (data) => data.floors.map(({ id, name, role, mood, planImage }) => ({
       id, name, role, mood, plan_image: planImage, room_count: data.floors.find((f) => f.id === id).rooms.length,
     })),
+  },
+  {
+    name: 'list_floor_guide',
+    description: 'Return the interactive vertical floor guide for Albury House.',
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    handler: (data) => data.floorGuide,
   },
   {
     name: 'get_floor',
@@ -232,7 +241,7 @@ const TOOLS = [
   },
   {
     name: 'list_house_modes',
-    description: 'Return the operating modes of the house (Residence, Away, Studio, Event, Quiet).',
+    description: 'Return the operating modes of the house (Residence, Away, Music Nobile, Event, Quiet).',
     inputSchema: { type: 'object', properties: {}, additionalProperties: false },
     handler: (data) => data.modes,
   },
@@ -243,7 +252,7 @@ const TOOLS = [
       type: 'object',
       properties: {
         floor_id: { type: 'string' },
-        kind: { type: 'string', description: 'e.g. "Room", "Overview", "Contact sheet".' },
+        kind: { type: 'string', description: 'e.g. "Exact room image", "Floor overview reference", "Contact sheet".' },
       },
       additionalProperties: false,
     },
@@ -258,7 +267,9 @@ const TOOLS = [
 
 const RESOURCES = [
   { uri: 'house://overview', name: 'House Overview', description: 'Sections, modes, and feature rooms.', mimeType: 'application/json' },
+  { uri: 'house://floor-guide', name: 'Floor Guide', description: 'Interactive floor guide metadata.', mimeType: 'application/json' },
   { uri: 'house://floors', name: 'Floors', description: 'All floors with their rooms.', mimeType: 'application/json' },
+  { uri: 'house://images', name: 'Image Archive', description: 'Room and overview image archive.', mimeType: 'application/json' },
   { uri: 'house://staff', name: 'Staff Directory', description: 'Full staff list.', mimeType: 'application/json' },
   { uri: 'house://meals', name: 'Meals Schedule', description: 'Today\'s meal service.', mimeType: 'application/json' },
   { uri: 'house://bookings', name: 'Bookings', description: 'Room bookings and bookable spaces.', mimeType: 'application/json' },
@@ -272,7 +283,15 @@ const RESOURCES = [
 function readResource(data, uri) {
   switch (uri) {
     case 'house://overview':
-      return { sections: data.nav.map(([id, label]) => ({ id, label })), modes: data.modes };
+      return {
+        house_name: data.houseName,
+        subtitle: data.houseSubtitle,
+        sections: data.nav.map(([id, label]) => ({ id, label })),
+        modes: data.modes,
+        floor_guide: data.floorGuide,
+      };
+    case 'house://floor-guide':
+      return data.floorGuide;
     case 'house://floors':
       return data.floors.map((f) => ({
         id: f.id, name: f.name, role: f.role, mood: f.mood,
@@ -280,6 +299,8 @@ function readResource(data, uri) {
       }));
     case 'house://staff':
       return data.staff.map(shapeStaff);
+    case 'house://images':
+      return data.imageArchive.map(shapeImage);
     case 'house://meals':
       return data.meals.map(shapeMeal);
     case 'house://bookings':
@@ -320,7 +341,7 @@ function handleRpc(message, data) {
           resources: { listChanged: false, subscribe: false },
         },
         instructions:
-          'Kensington House intranet MCP. Use tools to query floors, rooms, staff, meals, bookings, wellness, arrivals, collections, and the house manual. Resources are also available under house://*.',
+          'Albury House intranet MCP. Use tools to query floors, rooms, images, staff, meals, bookings, wellness, arrivals, collections, and the house manual. Resources are also available under house://*.',
       });
 
     case 'ping':
@@ -438,11 +459,11 @@ export const config = { path: '/mcp' };
 function landingPage() {
   const tools = TOOLS.map((t) => `<li><code>${t.name}</code> &mdash; ${t.description}</li>`).join('');
   const resources = RESOURCES.map((r) => `<li><code>${r.uri}</code> &mdash; ${r.description}</li>`).join('');
-  return `<!doctype html><html><head><meta charset="utf-8"><title>Kensington House MCP</title>
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Albury House MCP</title>
 <style>body{font:14px/1.5 system-ui,sans-serif;max-width:780px;margin:3rem auto;padding:0 1.25rem;color:#1a1a1a}
 code{background:#f4f1ec;padding:.1rem .35rem;border-radius:3px}h1{margin-bottom:.25rem}
 .muted{color:#666;margin-top:0}ul{padding-left:1.25rem}li{margin:.35rem 0}</style></head><body>
-<h1>Kensington House MCP</h1>
+<h1>Albury House MCP</h1>
 <p class="muted">Streamable-HTTP Model Context Protocol server. POST JSON-RPC requests to this URL.</p>
 <h2>Tools</h2><ul>${tools}</ul>
 <h2>Resources</h2><ul>${resources}</ul>
@@ -450,7 +471,7 @@ code{background:#f4f1ec;padding:.1rem .35rem;border-radius:3px}h1{margin-bottom:
 <p>Configure an MCP client with the server URL of this page. Example for an HTTP MCP client:</p>
 <pre><code>{
   "mcpServers": {
-    "kensington-house": { "url": "<this-url>" }
+    "albury-house": { "url": "<this-url>" }
   }
 }</code></pre>
 </body></html>`;
