@@ -174,7 +174,7 @@ const HOUSE_DATA = {
         ["flower-room", "Flower Room / Garden Pantry", "Stone counter, sink, vase storage, terrace glassware, candles and garden-event prep.", roomImage("ground_flowerroom.png")],
         ["boot-room", "Garden Lobby / Boot Room", "Stone floor, hooks, umbrellas, boots, cushions, throws and outdoor kit.", roomImage("ground_bootroom.png")],
         ["rear-terrace", "Rear Terrace", "Stone terrace with outdoor dining, lanterns, planters and heaters.", roomImage("ground_rearterrace.png")],
-        ["main-garden", "Main Garden", "Private walled garden with disciplined planting, terrace, lawn and far seating pocket.", roomImage("ground_garden.png")],
+        ["main-garden", "Main Garden", "Private walled garden with disciplined planting, terrace, lawn and far seating pocket.", roomImage("ground_main-garden.png")],
         ["front-garden", "Front Garden / Forecourt", "Formal front threshold with railings, planting, arrival control and the black front door approach.", roomImage("ground_front-garden.png")]
       ]
     },
@@ -280,6 +280,7 @@ const HOUSE_DATA = {
     ["Raised Ground Floor", "Coat Cupboard", "Exact room image", roomImage("ground_coats.png"), "raised-ground", "coat-cupboard"],
     ["Raised Ground Floor", "Kitchen / Breakfast Room", "Exact room image", roomImage("ground_kitchen.png"), "raised-ground", "kitchen-breakfast"],
     ["Raised Ground Floor", "Garden Room", "Exact room image", roomImage("ground_garden.png"), "raised-ground", "garden-room"],
+    ["Raised Ground Floor", "Main Garden", "Exact room image", roomImage("ground_main-garden.png"), "raised-ground", "main-garden"],
     ["Raised Ground Floor", "Rear Terrace", "Exact room image", roomImage("ground_rearterrace.png"), "raised-ground", "rear-terrace"],
     ["Raised Ground Floor", "Study / Library", "Exact room image", roomImage("ground_study_library.png"), "raised-ground", "study-library"],
     ["Raised Ground Floor", "Flower Room / Garden Pantry", "Exact room image", roomImage("ground_flowerroom.png"), "raised-ground", "flower-room"],
