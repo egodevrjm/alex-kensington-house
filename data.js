@@ -610,6 +610,14 @@ const ROOM_GALLERIES = {
     { label: "Room overview", src: roomImage("ub_bar.png") },
     { label: "Bar counter", src: roomImage("ub_bar-counter.png") },
     { label: "Games lounge", src: roomImage("ub_bar-games.png") }
+  ],
+  "upper-basement:cinema": [
+    { label: "Screening room", src: roomImage("ub_cinema.png") },
+    { label: "Refreshment corner", src: roomImage("ub_cinema-refreshments.png") }
+  ],
+  "upper-basement:wine-bourbon-room": [
+    { label: "Tasting room", src: roomImage("ub_winebourbon.png") },
+    { label: "Bourbon lounge", src: roomImage("ub_winebourbon-lounge.png") }
   ]
 };
 
