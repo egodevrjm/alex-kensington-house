@@ -501,6 +501,200 @@ p {
   align-items: start;
 }
 
+.explore-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 320px;
+  gap: 16px;
+  align-items: start;
+}
+
+.explore-rail,
+.explore-stage,
+.explore-side {
+  min-width: 0;
+}
+
+.compact-head {
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.explore-hero {
+  border: 1px solid var(--line);
+  background: rgba(255, 252, 246, 0.68);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.explore-image .image-slot {
+  aspect-ratio: 16 / 10;
+  min-height: min(560px, 58vh);
+}
+
+.explore-image .image-slot img {
+  object-fit: cover;
+}
+
+.explore-copy {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.explore-copy h2 {
+  font-size: clamp(2rem, 4vw, 4.5rem);
+}
+
+.explore-movement {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.move-card,
+.nearby-room,
+.explore-room-list button,
+.explore-trail button {
+  border: 1px solid var(--line);
+  background: rgba(255, 252, 246, 0.72);
+  color: var(--ink);
+  text-align: left;
+}
+
+.move-card {
+  min-height: 104px;
+  padding: 12px;
+}
+
+.move-card:hover,
+.nearby-room:hover,
+.explore-room-list button:hover,
+.explore-room-list button.active,
+.explore-trail button:hover,
+.explore-trail button.active {
+  background: var(--charcoal);
+  color: #fff7ec;
+  border-color: rgba(160, 111, 68, 0.7);
+}
+
+.move-card span,
+.move-card strong,
+.move-card small,
+.nearby-room span,
+.nearby-room strong,
+.nearby-room small {
+  display: block;
+}
+
+.move-card span,
+.nearby-room span {
+  color: var(--bronze);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.move-card strong,
+.nearby-room strong {
+  margin-top: 8px;
+  line-height: 1.2;
+}
+
+.move-card small,
+.nearby-room small {
+  margin-top: 6px;
+  color: currentColor;
+  opacity: 0.68;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.explore-ops {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.explore-ops article {
+  border: 1px solid var(--line);
+  background: rgba(255, 252, 246, 0.62);
+  padding: 14px;
+}
+
+.explore-ops span,
+.explore-ops strong,
+.explore-ops small {
+  display: block;
+}
+
+.explore-ops span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.explore-ops strong {
+  margin-top: 8px;
+}
+
+.explore-ops small {
+  color: var(--muted);
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
+.explore-side {
+  display: grid;
+  gap: 16px;
+}
+
+#exploreMap {
+  margin-top: 14px;
+}
+
+#exploreMap .outline-map.large svg {
+  min-height: 170px;
+}
+
+#exploreMap .outline-legend {
+  display: none;
+}
+
+.explore-nearby,
+.explore-room-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.nearby-room,
+.explore-room-list button {
+  padding: 10px;
+}
+
+.explore-room-list button {
+  min-height: 42px;
+}
+
+.explore-trail {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.explore-trail button {
+  min-height: 34px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-family: Georgia, serif;
+}
+
 .floor-rail,
 .tour-stage {
   min-width: 0;
@@ -1397,6 +1591,20 @@ time {
     grid-template-columns: 220px minmax(0, 1fr);
   }
 
+  .explore-layout {
+    grid-template-columns: 190px minmax(0, 1fr);
+  }
+
+  .explore-side {
+    grid-column: span 2;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .explore-movement,
+  .explore-ops {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .room-detail {
     position: static;
     grid-column: span 2;
@@ -1463,6 +1671,10 @@ time {
   .floor-guide-map.compact,
   .atlas-notes,
   .split-layout,
+  .explore-layout,
+  .explore-side,
+  .explore-movement,
+  .explore-ops,
   .booking-layout,
   .staff-grid,
   .wellness-grid,
@@ -1476,7 +1688,8 @@ time {
 
   .hero-panel,
   .panel.wide,
-  .room-detail {
+  .room-detail,
+  .explore-side {
     grid-column: auto;
   }
 

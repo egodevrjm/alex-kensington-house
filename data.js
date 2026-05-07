@@ -7,6 +7,7 @@ const HOUSE_DATA = {
   nav: [
     ["dashboard", "Dashboard"],
     ["tour", "House Tour"],
+    ["explore", "Explore"],
     ["images", "Images"],
     ["systems", "Systems"],
     ["staff", "Staff"],

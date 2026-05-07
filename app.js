@@ -106,6 +106,7 @@ function init() {
   renderModeSelect();
   renderDashboard();
   renderTour();
+  renderExplore();
   renderImageArchive();
   renderSystems();
   renderStaff();
@@ -183,6 +184,7 @@ function setView(id) {
   $(`#${id}View`).classList.add("active");
   $("#pageTitle").textContent = HOUSE_DATA.nav.find((item) => item[0] === id)[1];
   renderNav();
+  if (id === "explore") renderExplore();
 }
 
 function renderModeSelect() {
@@ -277,6 +279,7 @@ function renderTour() {
       state.floorId = floor.id;
       state.roomId = floor.rooms[0][0];
       renderTour();
+      renderExplore();
     });
     floorButtons.appendChild(button);
   });
@@ -303,11 +306,143 @@ function renderTour() {
     card.addEventListener("click", () => {
       state.roomId = id;
       renderTour();
+      renderExplore();
     });
     roomGrid.appendChild(card);
   });
 
   renderRoomDetail(floor);
+}
+
+function renderExplore() {
+  const floor = HOUSE_DATA.floors.find((item) => item.id === state.floorId) || HOUSE_DATA.floors[0];
+  const room = floor.rooms.find((item) => item[0] === state.roomId) || floor.rooms[0];
+  const [roomId, roomName, description, image] = room;
+  const roomOps = roomDetailFor(roomId, floor);
+
+  const floorButtons = $("#exploreFloorButtons");
+  floorButtons.innerHTML = "";
+  HOUSE_DATA.floors.forEach((item) => {
+    const button = create("button", item.id === floor.id ? "active" : "");
+    button.type = "button";
+    button.innerHTML = `<strong>${item.name}</strong><span>${item.role}</span>`;
+    button.addEventListener("click", () => openExploreRoom(item.id, item.rooms[0][0]));
+    floorButtons.appendChild(button);
+  });
+
+  const stage = $("#exploreStage");
+  stage.innerHTML = "";
+  const hero = create("article", "explore-hero");
+  const imageWrap = create("div", "explore-image");
+  imageWrap.appendChild(imageBlock(image, roomName, { meta: floor.name, floorId: floor.id, roomId, zoom: true }));
+  hero.appendChild(imageWrap);
+
+  const copy = create("div", "explore-copy");
+  copy.innerHTML = `
+    <p class="overline">${floor.name}</p>
+    <h2>${roomName}</h2>
+    <p>${description}</p>
+    <div class="detail-tags">
+      <span>${floor.role}</span>
+      <span>${roomOps.owner}</span>
+      <span>${roomOps.system.panel_id}</span>
+    </div>
+  `;
+  const movement = create("div", "explore-movement");
+  roomConnections(floor, roomId).forEach((connection) => {
+    const button = create("button", `move-card move-${connection.kind}`);
+    button.type = "button";
+    button.innerHTML = `<span>${connection.label}</span><strong>${connection.roomName}</strong><small>${connection.floorName}</small>`;
+    button.addEventListener("click", () => openExploreRoom(connection.floorId, connection.roomId));
+    movement.appendChild(button);
+  });
+  copy.appendChild(movement);
+  hero.appendChild(copy);
+  stage.appendChild(hero);
+
+  const operational = create("section", "explore-ops");
+  operational.innerHTML = `
+    <article><span>Scene</span><strong>${roomOps.system.temperature}</strong><small>${roomOps.system.scent}</small></article>
+    <article><span>Sound</span><strong>${roomOps.system.music}</strong><small>${roomOps.system.ambient_noise}</small></article>
+    <article><span>Access</span><strong>${roomOps.system.service_route}</strong><small>${roomOps.service}</small></article>
+  `;
+  stage.appendChild(operational);
+
+  const map = $("#exploreMap");
+  map.innerHTML = "";
+  map.appendChild(renderFloorPlanMap(floor, { size: "large", interactive: true }));
+
+  const nearby = $("#exploreNearby");
+  nearby.innerHTML = "";
+  roomConnections(floor, roomId).forEach((connection) => {
+    const button = create("button", "nearby-room");
+    button.type = "button";
+    button.innerHTML = `<span>${connection.label}</span><strong>${connection.roomName}</strong><small>${connection.floorName}</small>`;
+    button.addEventListener("click", () => openExploreRoom(connection.floorId, connection.roomId));
+    nearby.appendChild(button);
+  });
+
+  const roomList = $("#exploreRoomList");
+  roomList.innerHTML = "";
+  floor.rooms.forEach(([id, name]) => {
+    const button = create("button", id === roomId ? "active" : "", name);
+    button.type = "button";
+    button.addEventListener("click", () => openExploreRoom(floor.id, id));
+    roomList.appendChild(button);
+  });
+
+  const trail = $("#exploreTrail");
+  trail.innerHTML = "";
+  HOUSE_DATA.floors.forEach((item) => {
+    const guide = HOUSE_DATA.floorGuide.find((guideFloor) => guideFloor.id === item.id);
+    const marker = create("button", item.id === floor.id ? "active" : "", guide?.key || item.name);
+    marker.type = "button";
+    marker.setAttribute("aria-label", item.name);
+    marker.addEventListener("click", () => openExploreRoom(item.id, item.rooms[0][0]));
+    trail.appendChild(marker);
+  });
+}
+
+function roomConnections(floor, roomId) {
+  const floorIndex = HOUSE_DATA.floors.findIndex((item) => item.id === floor.id);
+  const roomIndex = floor.rooms.findIndex(([id]) => id === roomId);
+  const connections = [];
+  const addConnection = (kind, label, targetFloor, targetRoom) => {
+    if (!targetFloor || !targetRoom) return;
+    const key = `${targetFloor.id}:${targetRoom[0]}`;
+    if (key === `${floor.id}:${roomId}` || connections.some((item) => item.key === key)) return;
+    connections.push({
+      key,
+      kind,
+      label,
+      floorId: targetFloor.id,
+      floorName: targetFloor.name,
+      roomId: targetRoom[0],
+      roomName: targetRoom[1]
+    });
+  };
+
+  addConnection("previous", "Previous room", floor, floor.rooms[roomIndex - 1]);
+  addConnection("next", "Next room", floor, floor.rooms[roomIndex + 1]);
+
+  const upperFloor = HOUSE_DATA.floors[floorIndex + 1];
+  const lowerFloor = HOUSE_DATA.floors[floorIndex - 1];
+  addConnection("up", "One floor up", upperFloor, upperFloor?.rooms[Math.min(roomIndex, upperFloor.rooms.length - 1)]);
+  addConnection("down", "One floor down", lowerFloor, lowerFloor?.rooms[Math.min(roomIndex, lowerFloor.rooms.length - 1)]);
+
+  floor.rooms.forEach((room) => {
+    if (connections.length < 6) addConnection("near", "Same floor", floor, room);
+  });
+
+  return connections;
+}
+
+function openExploreRoom(floorId, roomId) {
+  state.floorId = floorId;
+  state.roomId = roomId;
+  state.showAtlas = false;
+  renderTour();
+  renderExplore();
 }
 
 function renderHouseAtlasMap(selector) {
@@ -327,6 +462,7 @@ function renderHouseAtlasMap(selector) {
       state.roomId = floor.rooms[0][0];
       state.showAtlas = false;
       renderTour();
+      renderExplore();
     });
     atlas.appendChild(button);
   });
@@ -395,6 +531,7 @@ function renderFloorPlanMap(floor, options = {}) {
         state.showAtlas = false;
         state.roomId = id;
         renderTour();
+        renderExplore();
       });
       group.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
@@ -402,6 +539,7 @@ function renderFloorPlanMap(floor, options = {}) {
           state.showAtlas = false;
           state.roomId = id;
           renderTour();
+          renderExplore();
         }
       });
     }
@@ -515,6 +653,7 @@ function renderFloorGuide(selector, variant) {
       state.showAtlas = false;
       if (variant === "dashboard") setView("tour");
       renderTour();
+      renderExplore();
     });
     container.appendChild(button);
   });
@@ -601,6 +740,7 @@ function openTourRoom(floorId, roomId) {
     state.showAtlas = true;
     setView("tour");
     renderTour();
+    renderExplore();
     return;
   }
 
@@ -609,6 +749,7 @@ function openTourRoom(floorId, roomId) {
   state.showAtlas = false;
   setView("tour");
   renderTour();
+  renderExplore();
 }
 
 function openImageModal({ src, label, meta, path, floorId, roomId }) {
