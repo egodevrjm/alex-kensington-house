@@ -299,6 +299,48 @@ button {
   line-height: 1.55;
 }
 
+.room-gallery {
+  position: absolute;
+  left: 26px;
+  right: 26px;
+  bottom: 188px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 540px;
+}
+
+.room-gallery button {
+  min-width: 0;
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(18, 14, 11, 0.62);
+  color: #fff8ee;
+  text-align: left;
+  backdrop-filter: blur(12px);
+}
+
+.room-gallery button.active {
+  border-color: #d7bc82;
+  background: rgba(18, 14, 11, 0.82);
+}
+
+.room-gallery img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  display: block;
+  border-radius: 5px;
+}
+
+.room-gallery span {
+  display: block;
+  padding: 6px 4px 2px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .context-panel {
   display: grid;
   gap: 14px;
@@ -973,6 +1015,13 @@ button {
     right: 12px;
     bottom: 12px;
     padding: 16px;
+  }
+
+  .room-gallery {
+    left: 12px;
+    right: 12px;
+    bottom: 176px;
+    max-width: none;
   }
 
   .movement-grid,

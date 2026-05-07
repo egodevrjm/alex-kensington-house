@@ -605,4 +605,12 @@ const FLOOR_PLAN_SHAPES = {
   }
 };
 
-export { HOUSE_DATA, FLOOR_PLAN_SHAPES };
+const ROOM_GALLERIES = {
+  "upper-basement:bar-games": [
+    { label: "Room overview", src: roomImage("ub_bar.png") },
+    { label: "Bar counter", src: roomImage("ub_bar-counter.png") },
+    { label: "Games lounge", src: roomImage("ub_bar-games.png") }
+  ]
+};
+
+export { HOUSE_DATA, FLOOR_PLAN_SHAPES, ROOM_GALLERIES };

@@ -17,7 +17,7 @@ import {
   UsersRound,
   X
 } from "lucide-react";
-import { HOUSE_DATA, FLOOR_PLAN_SHAPES } from "../data.js";
+import { HOUSE_DATA, FLOOR_PLAN_SHAPES, ROOM_GALLERIES } from "../data.js";
 
 const tabs = [
   ["explore", "Explore", Home],
@@ -178,17 +178,39 @@ function App() {
 
 function ExploreView({ floor, room, roomOps, connections, mode, openRoom, openImage }) {
   const [id, name, description, image] = room;
+  const gallery = ROOM_GALLERIES[`${floor.id}:${id}`] || [{ label: "Room view", src: image }];
+  const [activeImage, setActiveImage] = useState(gallery[0]);
+
+  useEffect(() => {
+    setActiveImage(gallery[0]);
+  }, [floor.id, id, gallery[0].src]);
+
   return (
     <section className="explore-grid">
       <div className="room-stage">
-        <button className="room-image-button" type="button" onClick={() => openImage({ src: image, label: name, meta: floor.name, floorId: floor.id, roomId: id })}>
-          <RoomImage src={image} alt={name} />
+        <button className="room-image-button" type="button" onClick={() => openImage({ src: activeImage.src, label: `${name} / ${activeImage.label}`, meta: floor.name, floorId: floor.id, roomId: id })}>
+          <RoomImage src={activeImage.src} alt={`${name} / ${activeImage.label}`} />
         </button>
         <div className="room-copy">
           <p>{floor.name} / {floor.role}</p>
           <h2>{name}</h2>
           <span>{description}</span>
         </div>
+        {gallery.length > 1 && (
+          <div className="room-gallery" aria-label={`${name} image views`}>
+            {gallery.map((item) => (
+              <button
+                key={item.src}
+                type="button"
+                className={item.src === activeImage.src ? "active" : ""}
+                onClick={() => setActiveImage(item)}
+              >
+                <RoomImage src={item.src} alt="" loading="lazy" />
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <aside className="context-panel">
