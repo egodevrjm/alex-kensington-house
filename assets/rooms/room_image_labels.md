@@ -1,8 +1,7 @@
 # Albury House Legacy Room Image Labels
 
-The app now uses the full 72-image Kensington set in
-`assets/kensington_house_images/`. These legacy curated images are retained for
-reference and fallback only.
+The app now uses the full 72-image Kensington set in this same `assets/rooms/`
+directory. These older curated names are retained for reference and fallback.
 
 These files were renamed from the dumped ChatGPT image exports into stable room-oriented names.
 

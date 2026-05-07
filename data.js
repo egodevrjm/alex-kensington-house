@@ -1,4 +1,4 @@
-const ROOM_IMAGE_BASE = "assets/kensington_house_images/";
+const ROOM_IMAGE_BASE = "assets/rooms/";
 const roomImage = (file) => `${ROOM_IMAGE_BASE}${file}`;
 
 const HOUSE_DATA = {
@@ -301,7 +301,6 @@ const HOUSE_DATA = {
     ["First Floor / Music Nobile", "Drinks Pantry", "Exact room image", roomImage("first_drinks-pantry.png"), "first-floor", "drinks-pantry"],
     ["First Floor / Music Nobile", "First-Floor Powder Room", "Exact room image", roomImage("first_powder.png"), "first-floor", "first-powder"],
     ["First Floor / Music Nobile", "Musician Route", "Exact room image", roomImage("first_musician-route.png"), "first-floor", "musician-route"],
-    ["Second Floor", "Second-Floor Composite", "Floor image", roomImage("secondfloor.png"), "second-floor", "second-landing"],
     ["Second Floor", "Second-Floor Landing", "Exact room image", roomImage("second_landing.png"), "second-floor", "second-landing"],
     ["Second Floor", "Principal Guest Bedroom", "Exact room image", roomImage("second_principal-guest.png"), "second-floor", "principal-guest"],
     ["Second Floor", "Principal Guest Ensuite", "Exact room image", roomImage("second_principal-guest-bath.png"), "second-floor", "principal-guest-bath"],
@@ -311,7 +310,6 @@ const HOUSE_DATA = {
     ["Second Floor", "Guest Bedroom 3", "Exact room image", roomImage("second_guest-bedroom-3.png"), "second-floor", "guest-bedroom-3"],
     ["Second Floor", "Ensuite Bathroom 3", "Exact room image", roomImage("second_guest-bath-3.png"), "second-floor", "guest-bath-3"],
     ["Second Floor", "Linen Press", "Exact room image", roomImage("second_linen-press.png"), "second-floor", "linen-press"],
-    ["Third Floor", "Third-Floor Composite", "Floor image", roomImage("thirdfloor.png"), "third-floor", "third-landing"],
     ["Third Floor", "Third-Floor Landing", "Exact room image", roomImage("third_landing.png"), "third-floor", "third-landing"],
     ["Third Floor", "Guest Bedroom 4", "Exact room image", roomImage("third_guest-bedroom-4.png"), "third-floor", "guest-bedroom-4"],
     ["Third Floor", "Ensuite Bathroom 4", "Exact room image", roomImage("third_guest-bath-4.png"), "third-floor", "guest-bath-4"],
@@ -329,7 +327,7 @@ const HOUSE_DATA = {
     ["Top Floor", "Current-Season Dressing Room", "Exact room image", roomImage("top_currentseasondressing.png"), "top-floor", "seasonal-dressing"],
     ["Top Floor", "Archive Wardrobe", "Exact room image", roomImage("top_archive.png"), "top-floor", "archive-wardrobe"],
     ["Top Floor", "Watch & Jewellery Safe", "Exact room image", roomImage("top_watch-safe.png"), "top-floor", "watch-safe"],
-    ["Top Floor", "Safe / Reading Nook", "Exact room image", roomImage("top_safe+readingnook.png"), "top-floor", "watch-safe"],
+    ["Top Floor", "Safe / Reading Nook", "Exact room image", roomImage("top_safe-readingnook.png"), "top-floor", "watch-safe"],
     ["Top Floor", "Rare Books Case / Reading Nook", "Exact room image", roomImage("top_rare-books.png"), "top-floor", "rare-books"],
     ["Top Floor", "Private Roof Terrace", "Exact room image", roomImage("top_roofterrace.png"), "top-floor", "roof-terrace"]
   ],

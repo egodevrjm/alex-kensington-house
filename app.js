@@ -53,6 +53,8 @@ function createSvgElement(tag, attrs = {}) {
 function imageBlock(src, label, options = {}) {
   const wrapper = create("div", "image-slot");
   const image = new Image();
+  image.loading = "lazy";
+  image.decoding = "async";
   image.src = src;
   image.alt = label;
   image.onload = () => {
@@ -105,9 +107,6 @@ function init() {
   renderNav();
   renderModeSelect();
   renderDashboard();
-  renderTour();
-  renderExplore();
-  renderImageArchive();
   renderSystems();
   renderStaff();
   renderMeals();
@@ -184,7 +183,9 @@ function setView(id) {
   $(`#${id}View`).classList.add("active");
   $("#pageTitle").textContent = HOUSE_DATA.nav.find((item) => item[0] === id)[1];
   renderNav();
+  if (id === "tour") renderTour();
   if (id === "explore") renderExplore();
+  if (id === "images") renderImageArchive();
 }
 
 function renderModeSelect() {
