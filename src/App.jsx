@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowDown,
   ArrowLeft,
@@ -182,7 +182,7 @@ function ExploreView({ floor, room, roomOps, connections, mode, openRoom, openIm
     <section className="explore-grid">
       <div className="room-stage">
         <button className="room-image-button" type="button" onClick={() => openImage({ src: image, label: name, meta: floor.name, floorId: floor.id, roomId: id })}>
-          <img src={image} alt={name} />
+          <RoomImage src={image} alt={name} />
         </button>
         <div className="room-copy">
           <p>{floor.name} / {floor.role}</p>
@@ -265,7 +265,7 @@ function AtlasView({ floor, roomId, openRoom }) {
         <div className="room-list">
           {floor.rooms.map(([id, name, description, image]) => (
             <button key={id} type="button" onClick={() => openRoom(floor.id, id, "explore")}>
-              <img src={image} alt="" loading="lazy" />
+              <RoomImage src={image} alt="" loading="lazy" />
               <span>
                 <strong>{name}</strong>
                 <small>{description}</small>
@@ -292,7 +292,7 @@ function LibraryView({ query, setQuery, rooms, openRoom, openImage }) {
         {rooms.map((room) => (
           <article key={`${room.floorId}:${room.id}`} className="library-card">
             <button type="button" className="library-image" onClick={() => openImage({ src: room.image, label: room.name, meta: room.floorName, floorId: room.floorId, roomId: room.id })}>
-              <img src={room.image} alt={room.name} loading="lazy" />
+              <RoomImage src={room.image} alt={room.name} loading="lazy" />
             </button>
             <button type="button" className="library-copy" onClick={() => openRoom(room.floorId, room.id)}>
               <strong>{room.name}</strong>
@@ -400,7 +400,7 @@ function ImageModal({ image, onClose, openRoom }) {
       <button className="modal-backdrop" type="button" aria-label="Close image" onClick={onClose} />
       <div className="modal-dialog">
         <button className="modal-close" type="button" aria-label="Close" onClick={onClose}><X size={20} /></button>
-        <img src={image.src} alt={image.label} />
+        <RoomImage src={image.src} alt={image.label} />
         <div className="modal-copy">
           <div>
             <p>{image.meta}</p>
@@ -423,6 +423,27 @@ function PanelTitle({ icon: Icon, title }) {
       <Icon size={17} />
       <h2>{title}</h2>
     </div>
+  );
+}
+
+function RoomImage({ src, alt, loading }) {
+  const [currentSrc, setCurrentSrc] = useState(src);
+  const fallbackSrc = src.endsWith(".webp") ? src.replace(/\.webp$/, ".png") : "";
+
+  useEffect(() => {
+    setCurrentSrc(src);
+  }, [src]);
+
+  return (
+    <img
+      src={currentSrc}
+      alt={alt}
+      loading={loading}
+      decoding="async"
+      onError={() => {
+        if (fallbackSrc && currentSrc !== fallbackSrc) setCurrentSrc(fallbackSrc);
+      }}
+    />
   );
 }
 
