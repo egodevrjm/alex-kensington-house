@@ -1,22 +1,15 @@
 const ROOM_IMAGE_BASE = "assets/rooms/";
-const roomImage = (file) => `${ROOM_IMAGE_BASE}${file}`;
+const roomImage = (file) => `${ROOM_IMAGE_BASE}${file.replace(/\.png$/, ".webp")}`;
 
 const HOUSE_DATA = {
   houseName: "Albury House",
   houseSubtitle: "Private house intranet",
   nav: [
-    ["dashboard", "Dashboard"],
-    ["tour", "House Tour"],
     ["explore", "Explore"],
-    ["images", "Images"],
-    ["systems", "Systems"],
-    ["staff", "Staff"],
-    ["meals", "Meals"],
-    ["bookings", "Bookings"],
-    ["wellness", "Wellness"],
-    ["arrivals", "Arrivals"],
-    ["collections", "Collections"],
-    ["manual", "Manual"]
+    ["atlas", "Atlas"],
+    ["library", "Library"],
+    ["ops", "Operations"],
+    ["team", "Team"]
   ],
   modes: [
     {
@@ -611,3 +604,5 @@ const FLOOR_PLAN_SHAPES = {
     outline: "M14 30H906V294H14Z"
   }
 };
+
+export { HOUSE_DATA, FLOOR_PLAN_SHAPES };

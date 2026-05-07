@@ -21,6 +21,7 @@ function loadHouseData() {
     } catch {}
   }
   if (!source) throw new Error('Could not locate data.js');
+  source = source.replace(/\nexport\s+\{[^}]+\};\s*$/m, '');
   cachedData = new Function(`${source}\nreturn HOUSE_DATA;`)();
   return cachedData;
 }

@@ -1,79 +1,29 @@
 # Albury House
 
-Private house intranet web app for Albury House.
+React/Vite private house app for Albury House.
 
-## Open
+## Local Development
 
-Open `index.html` in a browser.
+```sh
+npm install
+npm run dev
+```
 
-## Image Slots And Floor Maps
+## Production Build
 
-The House Tour currently renders generated SVG outline maps from
-`FLOOR_PLAN_SHAPES` in `data.js`. The maps are clickable in the app and cover
-all seven floors.
+```sh
+npm run build
+```
 
-The full-house atlas image is read from:
+The build publishes to `dist` and copies `assets/rooms` into `dist/assets/rooms`, so deployed room images resolve at `/assets/rooms/...`.
 
-- `assets/atlas/albury-house-atlas.png`
+## App Structure
 
-Per-floor atlas crops are read from:
-
-- `assets/atlas/floors/top-floor.png`
-- `assets/atlas/floors/third-floor.png`
-- `assets/atlas/floors/second-floor.png`
-- `assets/atlas/floors/first-floor-music-nobile.png`
-- `assets/atlas/floors/raised-ground-floor.png`
-- `assets/atlas/floors/upper-basement-lower-ground.png`
-- `assets/atlas/floors/lower-basement.png`
-
-Room tour images are read from `assets/rooms/`, which contains the full
-72-image Kensington set plus the original curated reference images.
-
-Examples:
-
-- `assets/rooms/ground_entrance.png`
-- `assets/rooms/first_musicroom.png`
-- `assets/rooms/top_archive.png`
-- `assets/rooms/top_roofterrace.png`
-
-The full room list and image paths live in `data.js`.
-The older curated room names remain alongside the current room set for reference.
-
-## Current Sections
-
-- Dashboard
-- House Tour
-- Image Archive
-- Digital Systems
-- Staff Directory
-- Meals Schedule
-- Room Booking
-- Wellness Spa Schedule
-- Arrivals
-- Collections
-- House Manual
-
-Bookings and house mode are stored in browser local storage.
+- `src/App.jsx` contains the React house explorer, atlas, image library, operations view and staff view.
+- `src/app.css` contains the current responsive interface styling.
+- `data.js` remains the shared house data source for the app and MCP function.
+- `assets/rooms` contains the original PNGs plus WebP versions used by the React app.
 
 ## MCP Server
 
-A Model Context Protocol server is exposed at `/mcp` (POST, JSON-RPC 2.0,
-streamable-HTTP transport). It surfaces the house data — floors, rooms, staff,
-meals, bookings, digital room systems, wellness, arrivals, readiness,
-collections and the manual — as MCP tools and `house://*` resources.
-
-To connect from an HTTP-capable MCP client:
-
-```json
-{
-  "mcpServers": {
-    "albury-house": {
-      "url": "https://<your-site>.netlify.app/mcp"
-    }
-  }
-}
-```
-
-A browser GET request to `/mcp` returns a human-readable index of the
-available tools and resources. The function reads `data.js` at runtime, so the
-website and MCP server share a single source of truth.
+A Model Context Protocol server is exposed at `/mcp` through the Netlify function. It reads `data.js`, so the website and MCP server share the same house data.
