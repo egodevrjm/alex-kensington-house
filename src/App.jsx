@@ -4,24 +4,32 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUp,
+  BadgeDollarSign,
+  BookOpen,
   CalendarDays,
   ChevronRight,
   CircleDot,
+  Disc3,
+  Gem,
   Grid3X3,
   Home,
   Images,
   Map,
+  Palette,
   Search,
+  Shirt,
   SlidersHorizontal,
   Sparkles,
+  Watch,
   UsersRound,
   X
 } from "lucide-react";
-import { HOUSE_DATA, FLOOR_PLAN_SHAPES, ROOM_GALLERIES } from "../data.js";
+import { HOUSE_DATA, FLOOR_PLAN_SHAPES, ROOM_GALLERIES, COLLECTION_ITEMS } from "../data.js";
 
 const tabs = [
   ["explore", "Explore", Home],
   ["atlas", "Atlas", Map],
+  ["collection", "Collection", Palette],
   ["library", "Library", Images],
   ["ops", "Operations", SlidersHorizontal],
   ["team", "Team", UsersRound]
@@ -41,6 +49,8 @@ function App() {
   const [roomId, setRoomId] = useState(initialFloor.rooms[0][0]);
   const [modeId, setModeId] = useState(localStorage.getItem("albury.mode") || "residence");
   const [query, setQuery] = useState("");
+  const [collectionQuery, setCollectionQuery] = useState("");
+  const [collectionType, setCollectionType] = useState("All");
   const [selectedImage, setSelectedImage] = useState(null);
 
   const floor = useMemo(() => HOUSE_DATA.floors.find((item) => item.id === floorId) || initialFloor, [floorId]);
@@ -62,6 +72,15 @@ function App() {
     if (!term) return allRooms;
     return allRooms.filter((item) => [item.name, item.floorName, item.floorRole, item.description].join(" ").toLowerCase().includes(term));
   }, [allRooms, query]);
+  const collectionTypes = useMemo(() => ["All", ...Array.from(new Set(COLLECTION_ITEMS.map((item) => item.type)))], []);
+  const filteredCollection = useMemo(() => {
+    const term = collectionQuery.trim().toLowerCase();
+    return COLLECTION_ITEMS.filter((item) => {
+      const typeMatch = collectionType === "All" || item.type === collectionType;
+      const textMatch = !term || [item.type, item.description, item.provenance, item.value, item.floor, item.placement].join(" ").toLowerCase().includes(term);
+      return typeMatch && textMatch;
+    });
+  }, [collectionQuery, collectionType]);
 
   const openRoom = (nextFloorId, nextRoomId, tab = activeTab) => {
     const nextFloor = HOUSE_DATA.floors.find((item) => item.id === nextFloorId);
@@ -157,6 +176,19 @@ function App() {
             rooms={filteredRooms}
             openRoom={(nextFloor, nextRoom) => openRoom(nextFloor, nextRoom, "explore")}
             openImage={setSelectedImage}
+          />
+        )}
+
+        {activeTab === "collection" && (
+          <CollectionView
+            items={filteredCollection}
+            allItems={COLLECTION_ITEMS}
+            types={collectionTypes}
+            activeType={collectionType}
+            setActiveType={setCollectionType}
+            query={collectionQuery}
+            setQuery={setCollectionQuery}
+            openRoom={(nextFloor, nextRoom) => openRoom(nextFloor, nextRoom, "explore")}
           />
         )}
 
@@ -323,6 +355,95 @@ function LibraryView({ query, setQuery, rooms, openRoom, openImage }) {
             </button>
           </article>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function CollectionView({ items, allItems, types, activeType, setActiveType, query, setQuery, openRoom }) {
+  const stats = collectionStats(allItems);
+  const typeCounts = Object.fromEntries(types.map((type) => [
+    type,
+    type === "All" ? allItems.length : allItems.filter((item) => item.type === type).length
+  ]));
+  const highlights = [
+    allItems.find((item) => item.value.includes("Priceless")) || allItems[0],
+    allItems.find((item) => item.description.includes("Bacon")) || allItems[1],
+    allItems.find((item) => item.description.includes("Patek")) || allItems[2]
+  ].filter(Boolean);
+
+  return (
+    <section className="collection-view">
+      <div className="collection-hero">
+        <div>
+          <p>House Collection</p>
+          <h2>Everything Alex lives with, wears, plays and protects.</h2>
+          <span>Art, McQueen archive, rare books, first pressings, jewellery and watches are treated as part of the Kensington house rather than a separate database.</span>
+        </div>
+        <div className="collection-metrics">
+          <Metric value={stats.total} label="Objects" />
+          <Metric value={stats.art} label="Artworks" />
+          <Metric value={stats.museum} label="Museum grade" />
+        </div>
+      </div>
+
+      <div className="collection-toolbar">
+        <label>
+          <Search size={17} />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search artist, object, provenance or value" />
+        </label>
+        <div className="collection-tabs" aria-label="Collection type filters">
+          {types.map((type) => (
+            <button key={type} type="button" className={activeType === type ? "active" : ""} onClick={() => setActiveType(type)}>
+              {collectionIcon(type)}
+              <span>{type}</span>
+              <strong>{typeCounts[type]}</strong>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="collection-feature-grid">
+        {highlights.map((item) => (
+          <article key={`highlight:${item.id}`} className={`collection-feature collection-${item.type.toLowerCase()}`}>
+            <span>{item.type}</span>
+            <h3>{item.description}</h3>
+            <p>{item.provenance}</p>
+            <strong>{item.value}</strong>
+          </article>
+        ))}
+      </div>
+
+      <div className="collection-layout">
+        <aside className="collection-map">
+          <PanelTitle icon={BadgeDollarSign} title="Collection Placement" />
+          {collectionPlacementGroups(allItems).map((group) => (
+            <button key={group.floor} type="button" onClick={() => group.room && openRoom(group.room[0], group.room[1])}>
+              <span>{group.count}</span>
+              <div>
+                <strong>{group.floor}</strong>
+                <small>{group.note}</small>
+              </div>
+            </button>
+          ))}
+        </aside>
+
+        <div className="collection-table" role="table" aria-label="Alex Wilson collection">
+          <div className="collection-row collection-header" role="row">
+            <span>Type</span>
+            <span>Object</span>
+            <span>Provenance</span>
+            <span>Value / Research</span>
+          </div>
+          {items.map((item) => (
+            <article key={item.id} className="collection-row" role="row">
+              <span className={`collection-type collection-${item.type.toLowerCase()}`}>{collectionIcon(item.type)} {item.type}</span>
+              <strong>{item.description}</strong>
+              <small>{item.provenance}</small>
+              <em>{item.value}</em>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -502,6 +623,47 @@ function OpsList({ title, icon: Icon, items }) {
       ))}
     </section>
   );
+}
+
+function collectionIcon(type) {
+  const icons = {
+    All: <Sparkles size={15} />,
+    Art: <Palette size={15} />,
+    Fashion: <Shirt size={15} />,
+    Book: <BookOpen size={15} />,
+    Vinyl: <Disc3 size={15} />,
+    Jewellery: <Gem size={15} />,
+    Watch: <Watch size={15} />
+  };
+  return icons[type] || icons.All;
+}
+
+function collectionStats(items) {
+  return {
+    total: items.length,
+    art: items.filter((item) => item.type === "Art").length,
+    museum: items.filter((item) => /museum|priceless|bacon|hirst|mcqueen/i.test(`${item.description} ${item.value}`)).length
+  };
+}
+
+function collectionPlacementGroups(items) {
+  const roomTargets = {
+    "Whole House": ["raised-ground", "entrance-hall"],
+    "Top Floor": ["top-floor", "archive-wardrobe"],
+    "First Floor / Music Nobile": ["first-floor", "control-listening"]
+  };
+  return Object.values(items.reduce((groups, item) => {
+    if (!groups[item.floor]) {
+      groups[item.floor] = {
+        floor: item.floor,
+        count: 0,
+        note: item.placement,
+        room: roomTargets[item.floor]
+      };
+    }
+    groups[item.floor].count += 1;
+    return groups;
+  }, {}));
 }
 
 function movementIcon(kind) {

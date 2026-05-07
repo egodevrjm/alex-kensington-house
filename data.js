@@ -1,5 +1,75 @@
+import collectionCsv from "./assets/data/alex_wilson_collection.csv?raw";
+
 const ROOM_IMAGE_BASE = "assets/rooms/";
 const roomImage = (file) => `${ROOM_IMAGE_BASE}${file.replace(/\.png$/, ".webp")}`;
+
+function parseCsvRows(csv) {
+  const rows = [];
+  let row = [];
+  let value = "";
+  let quoted = false;
+
+  for (let index = 0; index < csv.length; index += 1) {
+    const char = csv[index];
+    const next = csv[index + 1];
+
+    if (char === '"' && quoted && next === '"') {
+      value += '"';
+      index += 1;
+    } else if (char === '"') {
+      quoted = !quoted;
+    } else if (char === "," && !quoted) {
+      row.push(value);
+      value = "";
+    } else if ((char === "\n" || char === "\r") && !quoted) {
+      if (char === "\r" && next === "\n") index += 1;
+      row.push(value);
+      if (row.some((cell) => cell.trim())) rows.push(row);
+      row = [];
+      value = "";
+    } else {
+      value += char;
+    }
+  }
+
+  if (value || row.length) {
+    row.push(value);
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+function collectionLocation(type) {
+  const locations = {
+    Art: ["Whole House", "Rotated across halls, salons, bedrooms and private gallery walls"],
+    Fashion: ["Top Floor", "Archive Wardrobe and Current-Season Dressing Room"],
+    Book: ["Top Floor", "Rare Books Case / Reading Nook"],
+    Vinyl: ["First Floor / Music Nobile", "Control / Listening Room and Music Room"],
+    Jewellery: ["Top Floor", "Watch & Jewellery Safe"],
+    Watch: ["Top Floor", "Watch & Jewellery Safe"]
+  };
+  return locations[type] || ["Whole House", "House collection"];
+}
+
+function parseCollection(csv) {
+  const [headers, ...rows] = parseCsvRows(csv);
+  return rows.map((row, index) => {
+    const record = Object.fromEntries(headers.map((header, column) => [header, row[column] || ""]));
+    const [floor, placement] = collectionLocation(record.type);
+    return {
+      id: `${record.type.toLowerCase()}-${String(index + 1).padStart(2, "0")}`,
+      type: record.type,
+      description: record.description,
+      provenance: record.provenance,
+      value: record.value_genuine_research,
+      floor,
+      placement
+    };
+  });
+}
+
+const COLLECTION_ITEMS = parseCollection(collectionCsv);
 
 const HOUSE_DATA = {
   houseName: "Albury House",
@@ -622,4 +692,4 @@ const ROOM_GALLERIES = {
   ]
 };
 
-export { HOUSE_DATA, FLOOR_PLAN_SHAPES, ROOM_GALLERIES };
+export { HOUSE_DATA, FLOOR_PLAN_SHAPES, ROOM_GALLERIES, COLLECTION_ITEMS };
