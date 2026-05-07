@@ -26,17 +26,18 @@ Per-floor atlas crops are read from:
 - `assets/atlas/floors/upper-basement-lower-ground.png`
 - `assets/atlas/floors/lower-basement.png`
 
-Room tour images are read from `assets/rooms/`.
+Room tour images are read from `assets/kensington_house_images/`, which contains
+the full 72-image Kensington set.
 
 Examples:
 
-- `assets/rooms/entrance-hall.png`
-- `assets/rooms/music-room.png`
-- `assets/rooms/archive-wardrobe.png`
-- `assets/rooms/roof-terrace.png`
+- `assets/kensington_house_images/ground_entrance.png`
+- `assets/kensington_house_images/first_musicroom.png`
+- `assets/kensington_house_images/top_archive.png`
+- `assets/kensington_house_images/top_roofterrace.png`
 
 The full room list and image paths live in `data.js`.
-The current image labels are documented in `assets/rooms/room_image_labels.md`.
+The legacy curated room images remain in `assets/rooms/` for reference.
 
 ## Current Sections
 
